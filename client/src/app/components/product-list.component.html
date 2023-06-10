@@ -1,0 +1,62 @@
+<div class="main-content">
+  <div class="section-content section-content-p30">
+    <div class="container-fluid">
+      <div class="row">
+        <div *ngIf="loading" class="alert alert-warning col-md-12">
+          Loading...
+        </div>
+        <div
+          *ngIf="!loading && products.length < 1; else displayProducts"
+          class="alert alert-warning col-md-12"
+        >
+          No products matched your search!
+        </div>
+        <ng-template #displayProducts>
+          <div
+            *ngFor="
+              let product of products
+                | paginate
+                  : {
+                      itemsPerPage: tableSize,
+                      currentPage: page,
+                      totalItems: count
+                    }
+            "
+            class="col-md-3 my-auto"
+          >
+            <div class="product-box">
+              <a [routerLink]="['/products', product.id]">
+                <img [src]="product.imageUrl" class="img-responsive" />
+                <h1>
+                  {{ product.name }}
+                </h1>
+              </a>
+              <div class="price">
+                {{ product.unitPrice | currency : "SGD" }}
+              </div>
+              <a href="#" class="primary-btn">Try it on</a> &nbsp;
+              <a href="#" class="primary-btn">Add to cart</a>
+            </div>
+          </div>
+          <pagination-controls
+            previousLabel="Prev"
+            nextLabel="Next"
+            [maxSize]="5"
+            [responsive]="true"
+            (pageChange)="onPageChange($event)"
+          ></pagination-controls>
+          <span>
+            Displaying
+            <select (change)="onPageSizeChange(+perPage.value)" #perPage>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+            </select>
+            products per page
+          </span>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

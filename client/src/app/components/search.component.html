@@ -1,0 +1,31 @@
+<div class="form-header">
+  <form [formGroup]="form">
+    <input
+      type="text"
+      placeholder="Search products ..."
+      class="au-input au-input-xl"
+      formControlName="keyword"
+      #keyword
+      (keyup.enter)="searchProducts(keyword.value)"
+    />
+    <button type="button" style="color: white" (click)="clearSearch()">X</button
+    >&nbsp;
+    <button
+      class="au-btn-submit"
+      type="button"
+      (click)="searchProducts(keyword.value)"
+    >
+      Search
+    </button>
+  </form>
+</div>
+<div *ngIf="keyword.value.trim().length > 0" class="search-container">
+  <ul *ngIf="searchResults$ | async as results" class="search-results">
+    <li
+      *ngFor="let result of results"
+      (click)="onClickingSearchResult(result.id)"
+    >
+      {{ result.name }}
+    </li>
+  </ul>
+</div>

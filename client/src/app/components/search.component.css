@@ -1,0 +1,26 @@
+.search-container {
+  position: relative;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  background-color: #fff;
+  padding: 0;
+  list-style: none;
+  margin: 0;
+  display: block; /* Hide the list by default */
+  border-radius: 5px;
+}
+
+.search-results li {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.search-results li:hover {
+  background-color: #f4f4f4;
+}
