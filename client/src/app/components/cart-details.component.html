@@ -1,0 +1,59 @@
+<div class="main-content">
+  <div class="section-content section-content-p30">
+    <div class="container-fluid">
+      <div *ngIf="loading" class="alert alert-warning col-md-12">
+        Loading...
+      </div>
+      <div
+        *ngIf="!loading && cartItems.length < 1; else displayProducts"
+        class="alert alert-warning col-md-12"
+        role="alert"
+      >
+        Your cart is empty.
+      </div>
+      <ng-template #displayProducts>
+        <table class="table table-bordered">
+          <tr>
+            <th width="20%">Cart Item</th>
+            <th width="50%">Cart Item Details</th>
+            <th width="30%"></th>
+          </tr>
+          <tr *ngFor="let cartItem of cartItems; let i = index">
+            <td>
+              <img
+                [src]="cartItem.imageUrl"
+                [alt]="cartItem.name"
+                class="img-responsive"
+                width="150px"
+              />
+            </td>
+            <td>
+              <p>{{ cartItem.name }}</p>
+              <p>{{ cartItem.unitPrice | currency : "USD" }} each</p>
+            </td>
+            <td>
+              <div class="items">
+                <label>Quantity:</label> {{ cartItem.quantity }}
+              </div>
+              <p class="mt-2">
+                Subtotal:
+                {{ cartItem.quantity * cartItem.unitPrice | currency : "USD" }}
+              </p>
+            </td>
+          </tr>
+        </table>
+        <hr />
+        <p class="d-flex justify-content-end">
+          Total Item Count: {{ totalItems }}
+        </p>
+        <p class="d-flex justify-content-end">
+          Shipping:
+          {{ shippingFee ? (shippingFee | currency : "USD") : "Free Shipping" }}
+        </p>
+        <p class="d-flex justify-content-end">
+          Grand Total: {{ totalPrice + shippingFee | currency : "USD" }}
+        </p>
+      </ng-template>
+    </div>
+  </div>
+</div>

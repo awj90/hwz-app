@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Product } from '../models/product';
 import { ProductService } from '../services/product.service';
 import { ActivatedRoute } from '@angular/router';
+import { CartService } from '../services/cart.service';
+import { CartItem } from '../models/cart-item';
 
 @Component({
   selector: 'app-product',
@@ -14,12 +16,17 @@ export class ProductComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
+    private cartService: CartService,
     private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     // http and activated route subscriptions are unsubscribed automatically by ng
     this.activatedRoute.params.subscribe(() => this.getProduct());
+  }
+
+  addToCart(product: Product) {
+    this.cartService.addToCart(new CartItem(product));
   }
 
   private getProduct() {

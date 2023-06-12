@@ -8,7 +8,6 @@ import { ProductCategory } from '../models/product-category';
 export class ProductService {
   private BASE_API_URL_ENDPOINT: string = 'http://localhost:8080/api';
 
-  @Output()
   resultCount = new Subject<number>();
 
   constructor(private http: HttpClient) {}

@@ -12,8 +12,12 @@ import { SideBarComponent } from './components/side-bar.component';
 import { SearchComponent } from './components/search.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProductComponent } from './components/product.component';
+import { CartStatusComponent } from './components/cart-status.component';
+import { CartService } from './services/cart.service';
+import { CartDetailsComponent } from './components/cart-details.component';
 
 const appRoutes: Routes = [
+  { path: 'cart', component: CartDetailsComponent },
   { path: 'products/:id', component: ProductComponent },
   { path: 'search/:keyword', component: ProductListComponent },
   {
@@ -39,6 +43,8 @@ const appRoutes: Routes = [
     SideBarComponent,
     SearchComponent,
     ProductComponent,
+    CartStatusComponent,
+    CartDetailsComponent,
   ],
   imports: [
     BrowserModule,
@@ -47,7 +53,7 @@ const appRoutes: Routes = [
     NgxPaginationModule,
     RouterModule.forRoot(appRoutes),
   ],
-  providers: [ProductService],
+  providers: [ProductService, CartService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

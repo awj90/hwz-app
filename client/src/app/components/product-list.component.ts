@@ -3,6 +3,8 @@ import { ProductService } from '../services/product.service';
 import { Product } from '../models/product';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
+import { CartService } from '../services/cart.service';
+import { CartItem } from '../models/cart-item';
 
 @Component({
   selector: 'app-product-list',
@@ -21,6 +23,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   constructor(
     private productService: ProductService,
+    private cartService: CartService,
     private activatedRoute: ActivatedRoute
   ) {}
 
@@ -45,6 +48,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.tableSize = newSize;
     this.page = 1;
     this.getProducts();
+  }
+
+  addToCart(product: Product) {
+    this.cartService.addToCart(new CartItem(product));
   }
 
   private getProducts() {

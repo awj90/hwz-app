@@ -8,6 +8,7 @@
         <div
           *ngIf="!loading && products.length < 1; else displayProducts"
           class="alert alert-warning col-md-12"
+          role="alert"
         >
           No products matched your search!
         </div>
@@ -32,10 +33,19 @@
                 </h1>
               </a>
               <div class="price">
-                {{ product.unitPrice | currency : "SGD" }}
+                {{ product.unitPrice | currency : "USD" }}
               </div>
-              <a href="#" class="primary-btn">Try it on</a> &nbsp;
-              <a href="#" class="primary-btn">Add to cart</a>
+              <button type="button" class="btn btn-primary btn-sm">
+                Try it on
+              </button>
+              &nbsp;
+              <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="addToCart(product)"
+              >
+                Add to cart
+              </button>
             </div>
           </div>
           <pagination-controls
