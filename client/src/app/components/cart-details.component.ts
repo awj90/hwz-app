@@ -24,6 +24,7 @@ export class CartDetailsComponent implements OnInit {
   private getCartDetails() {
     this.loading = true;
     this.cartItems = this.cartService.cartItems.slice(); // get a copy without modifying
+    this.shippingFee = this.cartService.shippingFee;
     // using take 1 to allow Angular to manage the unsubscription
     this.cartService.totalPrice.pipe(take(1)).subscribe({
       next: (totalPrice: number) => {
@@ -49,5 +50,20 @@ export class CartDetailsComponent implements OnInit {
       },
     });
     this.cartService.computeCartTotals(); // trigger an emission for take 1 to get
+  }
+
+  incrementQuantity(cartItem: CartItem) {
+    this.cartService.addToCart(cartItem);
+    this.getCartDetails();
+  }
+
+  decrementQuantity(cartItem: CartItem) {
+    this.cartService.removeOneFromCart(cartItem);
+    this.getCartDetails();
+  }
+
+  removeFromCart(cartItem: CartItem) {
+    this.cartService.removeFromCart(cartItem);
+    this.getCartDetails();
   }
 }

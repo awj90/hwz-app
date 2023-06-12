@@ -1,0 +1,496 @@
+<div class="main-content page-m">
+  <div class="section-content section-content-p30">
+    <div class="container-fluid">
+      <form [formGroup]="form" (submit)="formSubmissionHandler()">
+        <div formGroupName="customerDetails" class="form-area">
+          <!-- Customer Details -->
+          <h3>Customer</h3>
+          <div class="row">
+            <div class="col-md-2"><label>First Name:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="Your given name"
+                  formControlName="firstName"
+                />
+                <span
+                  *ngIf="
+                    form.get('customerDetails.firstName')?.invalid &&
+                    form.get('customerDetails.firstName')?.touched
+                  "
+                  class="error"
+                  >Please input your first name</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>Last Name:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="Your family name"
+                  formControlName="lastName"
+                />
+                <span
+                  *ngIf="
+                    form.get('customerDetails.lastName')?.invalid &&
+                    form.get('customerDetails.lastName')?.touched
+                  "
+                  class="error"
+                  >Please input your last name</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>Email:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="Your email"
+                  formControlName="email"
+                />
+                <span
+                  *ngIf="
+                    form.get('customerDetails.email')?.invalid &&
+                    form.get('customerDetails.email')?.touched
+                  "
+                  class="error"
+                  >Please input a valid email</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div formGroupName="shippingAddress" class="form-area">
+          <h3>Shipping Address</h3>
+          <div class="row">
+            <div class="col-md-2"><label>Country:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <select formControlName="country">
+                  <option>TO DO</option>
+                </select>
+                <span
+                  *ngIf="
+                    form.get('shippingAddress.country')?.invalid &&
+                    form.get('shippingAddress.country')?.touched
+                  "
+                  class="error"
+                  >Please select a country</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>Street:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="Street name"
+                  formControlName="street"
+                />
+                <span
+                  *ngIf="
+                    form.get('shippingAddress.street')?.invalid &&
+                    form.get('shippingAddress.street')?.touched
+                  "
+                  class="error"
+                  >Please input a street name</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>City:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="City name"
+                  formControlName="city"
+                />
+                <span
+                  *ngIf="
+                    form.get('shippingAddress.city')?.invalid &&
+                    form.get('shippingAddress.city')?.touched
+                  "
+                  class="error"
+                  >Please input a city name</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>State:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="State name"
+                  formControlName="state"
+                />
+                <span
+                  *ngIf="
+                    form.get('shippingAddress.state')?.invalid &&
+                    form.get('shippingAddress.state')?.touched
+                  "
+                  class="error"
+                  >Please input a state name</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>Zip / Postal Code:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="Zip / Postal code"
+                  formControlName="postalCode"
+                />
+                <span
+                  *ngIf="
+                    form.get('shippingAddress.postalCode')?.invalid &&
+                    form.get('shippingAddress.postalCode')?.touched
+                  "
+                  class="error"
+                  >Please input a postal code</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Billing Address -->
+        <div formGroupName="billingAddress" class="form-area">
+          <h3>Billing Address</h3>
+          <div class="input-space">
+            <label class="au-checkbox"
+              ><input
+                type="checkbox"
+                (change)="onCheckOrUncheck($event)"
+              /><span class="au-checkmark"></span>Same as Shipping
+              Address</label
+            >
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>Country:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <select formControlName="country">
+                  <option>TO DO</option>
+                </select>
+                <span
+                  *ngIf="
+                    form.get('billingAddress.country')?.invalid &&
+                    form.get('billingAddress.country')?.touched
+                  "
+                  class="error"
+                  >Please select a country</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>Street:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="Street name"
+                  formControlName="street"
+                />
+                <span
+                  *ngIf="
+                    form.get('billingAddress.street')?.invalid &&
+                    form.get('billingAddress.street')?.touched
+                  "
+                  class="error"
+                  >Please input a street name</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>City:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="City name"
+                  formControlName="city"
+                />
+                <span
+                  *ngIf="
+                    form.get('billingAddress.city')?.invalid &&
+                    form.get('billingAddress.city')?.touched
+                  "
+                  class="error"
+                  >Please input a city name</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>State:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="State name"
+                  formControlName="state"
+                />
+                <span
+                  *ngIf="
+                    form.get('billingAddress.state')?.invalid &&
+                    form.get('billingAddress.state')?.touched
+                  "
+                  class="error"
+                  >Please input a state name</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>Zip / Postal Code:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="Zip / Postal code"
+                  formControlName="postalCode"
+                />
+                <span
+                  *ngIf="
+                    form.get('billingAddress.postalCode')?.invalid &&
+                    form.get('billingAddress.postalCode')?.touched
+                  "
+                  class="error"
+                  >Please input a postal code</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Credit Card Details -->
+        <div formGroupName="creditCardDetails" class="form-area">
+          <h3>Credit Card Details</h3>
+          <div class="row">
+            <div class="col-md-2"><label>Credit Card Type:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <select formControlName="cardType">
+                  <option>Visa</option>
+                  <option>Mastercard</option>
+                </select>
+                <span
+                  *ngIf="
+                    form.get('creditCardDetails.cardType')?.invalid &&
+                    form.get('creditCardDetails.cardType')?.touched
+                  "
+                  class="error"
+                  >Please select a credit card type</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>Name on Credit Card:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="Name on credit card"
+                  formControlName="nameOnCard"
+                />
+                <span
+                  *ngIf="
+                    form.get('creditCardDetails.nameOnCard')?.invalid &&
+                    form.get('creditCardDetails.nameOnCard')?.touched
+                  "
+                  class="error"
+                  >Please input the name on the credit card</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>Credit Card Number:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="Credit card number without dashes"
+                  formControlName="cardNumber"
+                />
+                <span
+                  *ngIf="
+                    form.get('creditCardDetails.cardNumber')?.invalid &&
+                    form.get('creditCardDetails.cardNumber')?.touched
+                  "
+                  class="error"
+                  >Please input a valid credit card number</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2"><label>CVV:</label></div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <input
+                  type="text"
+                  placeholder="CVV number"
+                  formControlName="cvv"
+                />
+                <span
+                  *ngIf="
+                    form.get('creditCardDetails.cvv')?.invalid &&
+                    form.get('creditCardDetails.cvv')?.touched
+                  "
+                  class="error"
+                  >Please input a valid CVV</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2">
+              <label>Credit Card Expiration Month:</label>
+            </div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <select formControlName="expirationMonth">
+                  <option>January</option>
+                  <option>February</option>
+                  <option>March</option>
+                  <option>April</option>
+                  <option>May</option>
+                  <option>June</option>
+                  <option>July</option>
+                  <option>August</option>
+                  <option>September</option>
+                  <option>October</option>
+                  <option>November</option>
+                  <option>December</option>
+                </select>
+                <span
+                  *ngIf="
+                    form.get('creditCardDetails.expirationMonth')?.invalid &&
+                    form.get('creditCardDetails.expirationMonth')?.touched
+                  "
+                  class="error"
+                  >Please select the expiration month on your credit card</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2">
+              <label>Credit Card Expiration Year:</label>
+            </div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <select formControlName="expirationYear">
+                  <option>TO DO</option>
+                </select>
+                <span
+                  *ngIf="
+                    form.get('creditCardDetails.expirationYear')?.invalid &&
+                    form.get('creditCardDetails.expirationYear')?.touched
+                  "
+                  class="error"
+                  >Please select the expiration year on your credit card</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Final review of order -->
+        <div class="form-area">
+          <h3>Review Your Order</h3>
+          <div *ngIf="loading" class="alert alert-warning col-md-12">
+            Loading...
+          </div>
+          <div *ngIf="!loading && cartItems.length < 1; else displayProducts">
+            Your order is empty, please add item(s) to cart before checking out.
+          </div>
+          <ng-template #displayProducts>
+            <ul *ngIf="!loading && cartItems.length > 0">
+              <li *ngFor="let cartItem of cartItems">
+                {{ cartItem.quantity }} x {{ cartItem.name }} ({{
+                  cartItem.quantity
+                }}
+                x {{ cartItem.unitPrice | currency : "USD" }})
+              </li>
+            </ul>
+            <hr />
+            <p>
+              Shipping:
+              {{
+                shippingFee ? (shippingFee | currency : "USD") : "Free Shipping"
+              }}
+            </p>
+            <p>
+              <b
+                >Grand Total:
+                {{ totalPrice + shippingFee | currency : "USD" }}</b
+              >
+            </p>
+          </ng-template>
+        </div>
+
+        <div class="input-space">
+          <label class="au-checkbox"
+            ><input
+              type="checkbox"
+              formControlName="agreeToTermsAndConditions"
+            /><span class="au-checkmark"></span>*I confirm I have read,
+            understood, and agree to the
+            <a href="#">general terms and conditions </a> of the
+            purchase.&nbsp;<span
+              *ngIf="form.get('agreeToTermsAndConditions')?.invalid"
+              class="error"
+              >Please agree to the terms and conditions of the purchase.</span
+            ></label
+          >
+          <label class="au-checkbox"
+            ><input
+              type="checkbox"
+              formControlName="subscribeToMarketingEmails"
+            /><span class="au-checkmark"></span>I would like to sign up for
+            marketing emails to keep up to date with the hottest deals in
+            town.</label
+          >
+        </div>
+
+        <div class="text-center">
+          <button
+            type="button"
+            [routerLink]="['/cart']"
+            class="btn btn-secondary"
+          >
+            Back to cart</button
+          >&nbsp;
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="form.invalid"
+          >
+            Confirm purchase
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

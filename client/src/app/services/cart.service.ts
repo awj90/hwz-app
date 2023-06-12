@@ -5,10 +5,11 @@ import { Subject } from 'rxjs';
 @Injectable()
 export class CartService {
   cartItems: CartItem[] = [];
+  shippingFee: number = 0;
   totalPrice = new Subject<number>();
   totalItems = new Subject<number>();
 
-  addToCart(cartItem: CartItem) {
+  addToCart(cartItem: CartItem): void {
     const index = this.cartItems.findIndex((item) => item.id === cartItem.id);
 
     if (index === -1) {
@@ -22,7 +23,27 @@ export class CartService {
     this.computeCartTotals();
   }
 
-  computeCartTotals() {
+  removeOneFromCart(cartItem: CartItem): void {
+    const index = this.cartItems.findIndex((item) => item.id === cartItem.id);
+    if (index === -1) {
+      return;
+    }
+    if (this.cartItems[index].quantity > 1) {
+      this.cartItems[index].quantity--;
+    } else {
+      this.cartItems.splice(index, 1);
+    }
+  }
+
+  removeFromCart(cartItem: CartItem): void {
+    const index = this.cartItems.findIndex((item) => item.id === cartItem.id);
+    if (index === -1) {
+      return;
+    }
+    this.cartItems.splice(index, 1);
+  }
+
+  computeCartTotals(): void {
     let totalPrice: number = 0;
     let totalItems: number = 0;
     for (let cartItem of this.cartItems) {

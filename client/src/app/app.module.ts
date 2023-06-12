@@ -15,8 +15,10 @@ import { ProductComponent } from './components/product.component';
 import { CartStatusComponent } from './components/cart-status.component';
 import { CartService } from './services/cart.service';
 import { CartDetailsComponent } from './components/cart-details.component';
+import { CheckoutComponent } from './components/checkout.component';
 
 const appRoutes: Routes = [
+  { path: 'checkout', component: CheckoutComponent },
   { path: 'cart', component: CartDetailsComponent },
   { path: 'products/:id', component: ProductComponent },
   { path: 'search/:keyword', component: ProductListComponent },
@@ -45,6 +47,7 @@ const appRoutes: Routes = [
     ProductComponent,
     CartStatusComponent,
     CartDetailsComponent,
+    CheckoutComponent,
   ],
   imports: [
     BrowserModule,
