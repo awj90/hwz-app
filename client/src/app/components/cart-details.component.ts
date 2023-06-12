@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CartItem } from '../models/cart-item';
 import { CartService } from '../services/cart.service';
-import { firstValueFrom, take } from 'rxjs';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-cart-details',

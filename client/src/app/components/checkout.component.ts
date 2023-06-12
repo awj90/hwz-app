@@ -3,24 +3,46 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CartItem } from '../models/cart-item';
 import { CartService } from '../services/cart.service';
 import { take } from 'rxjs';
+import { BeforeLeavingComponent } from '../utils';
 
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css'],
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
   form!: FormGroup;
   cartItems: CartItem[] = [];
-  totalPrice: number = 0;
+  totalPrice: number = 0; // excludes shipping fees if any
   shippingFee: number = 0;
   loading: boolean = true;
+  months: number[] = [];
+  years: number[] = [];
 
-  constructor(private fb: FormBuilder, private cartService: CartService) {}
+  constructor(private fb: FormBuilder, private cartService: CartService) {
+    for (let i = 1; i <= 12; i++) {
+      this.months.push(i);
+    }
+    for (
+      let i = new Date().getFullYear();
+      i <= new Date().getFullYear() + 6;
+      i++
+    ) {
+      this.years.push(i);
+    }
+  }
 
   ngOnInit(): void {
     this.form = this.createForm();
     this.getCartDetails();
+  }
+
+  formNotSaved(): boolean {
+    return this.form.dirty;
+  }
+
+  confirmMessage(): string {
+    return 'You have not completed making the purchase.\n Are you sure you want to leave?';
   }
 
   private getCartDetails() {
@@ -92,8 +114,12 @@ export class CheckoutComponent implements OnInit {
           Validators.required,
           Validators.pattern(/^[0-9]{3}$/),
         ]),
-        expirationMonth: this.fb.control<string>('', [Validators.required]),
-        expirationYear: this.fb.control<string>('', [Validators.required]),
+        expirationMonth: this.fb.control<number>(new Date().getMonth(), [
+          Validators.required,
+        ]),
+        expirationYear: this.fb.control<number>(new Date().getFullYear(), [
+          Validators.required,
+        ]),
       }),
       agreeToTermsAndConditions: this.fb.control<boolean>(true, [
         Validators.requiredTrue,

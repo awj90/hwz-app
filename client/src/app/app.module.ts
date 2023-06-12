@@ -16,9 +16,14 @@ import { CartStatusComponent } from './components/cart-status.component';
 import { CartService } from './services/cart.service';
 import { CartDetailsComponent } from './components/cart-details.component';
 import { CheckoutComponent } from './components/checkout.component';
+import { formGuard } from './utils';
 
 const appRoutes: Routes = [
-  { path: 'checkout', component: CheckoutComponent },
+  {
+    path: 'checkout',
+    component: CheckoutComponent,
+    canDeactivate: [formGuard],
+  },
   { path: 'cart', component: CartDetailsComponent },
   { path: 'products/:id', component: ProductComponent },
   { path: 'search/:keyword', component: ProductListComponent },

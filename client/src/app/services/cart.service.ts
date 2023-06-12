@@ -1,4 +1,4 @@
-import { Injectable, Output } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CartItem } from '../models/cart-item';
 import { Subject } from 'rxjs';
 
