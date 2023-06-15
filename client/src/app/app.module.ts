@@ -17,6 +17,7 @@ import { CartService } from './services/cart.service';
 import { CartDetailsComponent } from './components/cart-details.component';
 import { CheckoutComponent } from './components/checkout.component';
 import { formGuard } from './utils';
+import { LocationService } from './services/location.service';
 
 const appRoutes: Routes = [
   {
@@ -61,7 +62,7 @@ const appRoutes: Routes = [
     NgxPaginationModule,
     RouterModule.forRoot(appRoutes),
   ],
-  providers: [ProductService, CartService],
+  providers: [ProductService, CartService, LocationService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

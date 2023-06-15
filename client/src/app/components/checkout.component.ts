@@ -2,8 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CartItem } from '../models/cart-item';
 import { CartService } from '../services/cart.service';
-import { take } from 'rxjs';
+import { take, firstValueFrom, Subscription, tap } from 'rxjs';
 import { BeforeLeavingComponent } from '../utils';
+import { Country } from '../models/country';
+import { LocationService } from '../services/location.service';
+import { State } from '../models/state';
 
 @Component({
   selector: 'app-checkout',
@@ -12,16 +15,41 @@ import { BeforeLeavingComponent } from '../utils';
 })
 export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
   form!: FormGroup;
+  loading: boolean = true;
   cartItems: CartItem[] = [];
   totalPrice: number = 0; // excludes shipping fees if any
   shippingFee: number = 0;
-  loading: boolean = true;
+  addressSubscription$!: Subscription;
   allMonths: number[] = [];
   remainingMonthsInCurrentYear: number[] = [];
   months: number[] = [];
   years: number[] = [];
+  countries$!: Promise<Country[]>;
+  currentCountryCode!: string;
+  shippingAddressStates: State[] = [];
+  billingAddressStates: State[] = [];
 
-  constructor(private fb: FormBuilder, private cartService: CartService) {
+  constructor(
+    private fb: FormBuilder,
+    private cartService: CartService,
+    private locationService: LocationService
+  ) {}
+
+  ngOnInit(): void {
+    // initialize dropdown fields of form (shipping and billing address's country)
+    // http subscriptions are unsubscribed automatically by ng
+    this.countries$ = firstValueFrom(this.locationService.getCountries());
+    this.locationService.getCurrentCountryCode().subscribe((countryCode) => {
+      this.currentCountryCode = countryCode;
+      this.form.get(['shippingAddress', 'country'])?.setValue(countryCode);
+      this.form.get(['billingAddress', 'country'])?.setValue(countryCode);
+      this.locationService.getStates(countryCode).subscribe((states) => {
+        this.shippingAddressStates = states;
+        this.billingAddressStates = states;
+      });
+    });
+
+    // initialize dropdown fields of form (credit card's expiry year and month)
     for (
       let i = new Date().getFullYear();
       i <= new Date().getFullYear() + 6;
@@ -35,22 +63,31 @@ export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
     for (let i = new Date().getMonth() + 1; i <= 12; i++) {
       this.remainingMonthsInCurrentYear.push(i);
     }
-    this.months = [...this.remainingMonthsInCurrentYear]; // create a separate copy
-  }
+    this.months = [...this.remainingMonthsInCurrentYear]; // create a separate copy to avoid unintended mutation of original
 
-  ngOnInit(): void {
+    // initialize form group
     this.form = this.createForm();
     this.getCartDetails();
   }
 
-  // set billing address fields equal to shipping address fields if user indicates so
+  // disable and set billing address fields equal to shipping address fields if user indicates so
   onCheckOrUncheck($event: any) {
     if ($event.target.checked) {
+      this.form.get('billingAddress')?.disable();
       this.form.controls['billingAddress'].setValue(
         this.form.controls['shippingAddress'].value
       );
+      this.billingAddressStates = this.shippingAddressStates;
+      this.addressSubscription$ = this.form.controls[
+        'shippingAddress'
+      ].valueChanges.subscribe((changes) =>
+        this.form.controls['billingAddress'].setValue(changes)
+      );
     } else {
+      this.form.get('billingAddress')?.enable();
       this.form.controls['billingAddress'].reset();
+      this.billingAddressStates = [];
+      this.addressSubscription$.unsubscribe();
     }
   }
 
@@ -61,6 +98,28 @@ export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
     } else {
       this.months = this.allMonths;
     }
+  }
+
+  getStatesForSelectedCountry(addressType: string): void {
+    firstValueFrom(
+      this.locationService.getStates(this.form.get(addressType)?.value.country)
+    )
+      .then((states) => {
+        switch (addressType) {
+          case 'shippingAddress':
+            this.shippingAddressStates = states;
+            break;
+          case 'billingAddress':
+            this.billingAddressStates = states;
+            break;
+          default:
+            break;
+        }
+      })
+      .catch((err: any) => {
+        alert(err);
+        console.info(err);
+      });
   }
 
   formSubmissionHandler() {
@@ -106,14 +165,18 @@ export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
         ]),
       }),
       shippingAddress: this.fb.group({
-        country: this.fb.control<string>('', [Validators.required]),
+        country: this.fb.control<string>(this.currentCountryCode, [
+          Validators.required,
+        ]),
         street: this.fb.control<string>('', [Validators.required]),
         city: this.fb.control<string>('', [Validators.required]),
         state: this.fb.control<string>('', [Validators.required]),
         postalCode: this.fb.control<string>('', [Validators.required]),
       }),
       billingAddress: this.fb.group({
-        country: this.fb.control<string>('', [Validators.required]),
+        country: this.fb.control<string>(this.currentCountryCode, [
+          Validators.required,
+        ]),
         street: this.fb.control<string>('', [Validators.required]),
         city: this.fb.control<string>('', [Validators.required]),
         state: this.fb.control<string>('', [Validators.required]),

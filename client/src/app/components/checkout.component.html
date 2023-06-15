@@ -74,8 +74,17 @@
             <div class="col-md-2"><label>*Country:</label></div>
             <div class="col-md-9">
               <div class="input-space">
-                <select formControlName="country">
-                  <option>TO DO</option>
+                <select
+                  formControlName="country"
+                  (change)="getStatesForSelectedCountry('shippingAddress')"
+                >
+                  <option
+                    *ngFor="let country of countries$ | async"
+                    [value]="country.code"
+                    [selected]="country.code === currentCountryCode"
+                  >
+                    {{ country.name }}
+                  </option>
                 </select>
                 <span
                   *ngIf="
@@ -132,11 +141,14 @@
             <div class="col-md-2"><label>*State / Province:</label></div>
             <div class="col-md-9">
               <div class="input-space">
-                <input
-                  type="text"
-                  placeholder="State name"
-                  formControlName="state"
-                />
+                <select formControlName="state">
+                  <option
+                    *ngFor="let state of shippingAddressStates"
+                    [value]="state.id"
+                  >
+                    {{ state.name }}
+                  </option>
+                </select>
                 <span
                   *ngIf="
                     form.get('shippingAddress.state')?.invalid &&
@@ -186,8 +198,17 @@
             <div class="col-md-2"><label>*Country:</label></div>
             <div class="col-md-9">
               <div class="input-space">
-                <select formControlName="country">
-                  <option>TO DO</option>
+                <select
+                  formControlName="country"
+                  (change)="getStatesForSelectedCountry('billingAddress')"
+                >
+                  <option
+                    *ngFor="let country of countries$ | async"
+                    [value]="country.code"
+                    [selected]="country.code === currentCountryCode"
+                  >
+                    {{ country.name }}
+                  </option>
                 </select>
                 <span
                   *ngIf="
@@ -244,11 +265,14 @@
             <div class="col-md-2"><label>*State / Province:</label></div>
             <div class="col-md-9">
               <div class="input-space">
-                <input
-                  type="text"
-                  placeholder="State name"
-                  formControlName="state"
-                />
+                <select formControlName="state">
+                  <option
+                    *ngFor="let state of billingAddressStates"
+                    [value]="state.id"
+                  >
+                    {{ state.name }}
+                  </option>
+                </select>
                 <span
                   *ngIf="
                     form.get('billingAddress.state')?.invalid &&

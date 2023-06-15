@@ -13,8 +13,10 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.EntityType;
+import sg.edu.nus.iss.server.models.Country;
 import sg.edu.nus.iss.server.models.Product;
 import sg.edu.nus.iss.server.models.ProductCategory;
+import sg.edu.nus.iss.server.models.State;
 
 @Configuration
 public class DataRestConfig implements RepositoryRestConfigurer {
@@ -28,17 +30,17 @@ public class DataRestConfig implements RepositoryRestConfigurer {
         // Set up array of disabled HttpMethods
         HttpMethod[] disabledMethods = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE};
 
-        // disable the HttpMethods for the Product class
-        config.getExposureConfiguration()
-                .forDomainType(Product.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(disabledMethods))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(disabledMethods));
+        // disable PUT, POST, DELETE methods for the Product class
+        disableHttpMethods(config, disabledMethods, Product.class);
 
-        // disable the HttpMethods for the ProductCategory class
-        config.getExposureConfiguration()
-                .forDomainType(ProductCategory.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(disabledMethods))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(disabledMethods));
+        // disable PUT, POST, DELETE methods for the ProductCategory class
+        disableHttpMethods(config, disabledMethods, ProductCategory.class);
+
+        // disable PUT, POST, DELETE methods for the Country class
+        disableHttpMethods(config, disabledMethods, Country.class);
+
+        // disable PUT, POST, DELETE methods for the State class
+        disableHttpMethods(config, disabledMethods, State.class);
 
         // explicitly expose product ids and product category ids in API responses
         exposeIds(config);
@@ -58,7 +60,13 @@ public class DataRestConfig implements RepositoryRestConfigurer {
         // convert list of entity classes to an array and expose ids for the array of entity classes
         Class[] entityClassesArr = entityClasses.toArray(new Class[entityClasses.size()]);
         config.exposeIdsFor(entityClassesArr);
-        
+    }
+
+    private void disableHttpMethods(RepositoryRestConfiguration config, HttpMethod[] disabledMethods, Class modelClass){
+         config.getExposureConfiguration()
+         .forDomainType(modelClass)
+         .withItemExposure((metdata, httpMethods) -> httpMethods.disable(disabledMethods))
+         .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(disabledMethods));
     }
     
 }

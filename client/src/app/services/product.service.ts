@@ -6,7 +6,7 @@ import { ProductCategory } from '../models/product-category';
 
 @Injectable()
 export class ProductService {
-  private BASE_API_URL_ENDPOINT: string = 'http://localhost:8080/api';
+  private SPRINGBOOT_BASE_API_URL_ENDPOINT: string = 'http://localhost:8080/api';
 
   // emit the result count of a MySQL query for pagination purposes (subscribed in ProductListComponent)
   resultCount = new Subject<number>();
@@ -14,7 +14,7 @@ export class ProductService {
   constructor(private http: HttpClient) {}
 
   getAllProducts(page: number = 0, size: number = 20): Observable<Product[]> {
-    const FULL_API_URL_ENDPOINT = `${this.BASE_API_URL_ENDPOINT}/products`;
+    const FULL_API_URL_ENDPOINT = `${this.SPRINGBOOT_BASE_API_URL_ENDPOINT}/products`;
 
     return this.http
       .get<ApiGetResponseForProducts>(FULL_API_URL_ENDPOINT, {
@@ -35,7 +35,7 @@ export class ProductService {
     page: number = 0,
     size: number = 20
   ): Observable<Product[]> {
-    const FULL_API_URL_ENDPOINT = `${this.BASE_API_URL_ENDPOINT}/products/search/findByCategoryId?`;
+    const FULL_API_URL_ENDPOINT = `${this.SPRINGBOOT_BASE_API_URL_ENDPOINT}/products/search/findByCategoryId?`;
 
     return this.http
       .get<ApiGetResponseForProducts>(FULL_API_URL_ENDPOINT, {
@@ -59,7 +59,7 @@ export class ProductService {
     page: number = 0,
     size: number = 20
   ): Observable<Product[]> {
-    const FULL_API_URL_ENDPOINT = `${this.BASE_API_URL_ENDPOINT}/products/search/findByNameContainingOrDescriptionContaining`;
+    const FULL_API_URL_ENDPOINT = `${this.SPRINGBOOT_BASE_API_URL_ENDPOINT}/products/search/findByNameContainingOrDescriptionContaining`;
 
     return this.http
       .get<ApiGetResponseForProducts>(FULL_API_URL_ENDPOINT, {
@@ -76,7 +76,7 @@ export class ProductService {
   }
 
   getProductCategories(): Observable<ProductCategory[]> {
-    const FULL_API_URL_ENDPOINT = `${this.BASE_API_URL_ENDPOINT}/product-category`;
+    const FULL_API_URL_ENDPOINT = `${this.SPRINGBOOT_BASE_API_URL_ENDPOINT}/product-category`;
     return this.http
       .get<ApiGetResponseForProductCategories>(FULL_API_URL_ENDPOINT)
       .pipe(map((resp) => resp._embedded.productCategory));
@@ -86,7 +86,7 @@ export class ProductService {
   // select * from product where id = 1
   // @PathVariable Long id
   getProductById(id: number): Observable<Product> {
-    const FULL_API_URL_ENDPOINT = `${this.BASE_API_URL_ENDPOINT}/products/${id}`;
+    const FULL_API_URL_ENDPOINT = `${this.SPRINGBOOT_BASE_API_URL_ENDPOINT}/products/${id}`;
     return this.http.get<Product>(FULL_API_URL_ENDPOINT);
   }
 }
