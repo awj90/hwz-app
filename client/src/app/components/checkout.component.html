@@ -129,7 +129,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-2"><label>*State:</label></div>
+            <div class="col-md-2"><label>*State / Province:</label></div>
             <div class="col-md-9">
               <div class="input-space">
                 <input
@@ -241,7 +241,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-2"><label>*State:</label></div>
+            <div class="col-md-2"><label>*State / Province:</label></div>
             <div class="col-md-9">
               <div class="input-space">
                 <input
@@ -366,6 +366,31 @@
           </div>
           <div class="row">
             <div class="col-md-2">
+              <label>*Credit Card Expiration Year:</label>
+            </div>
+            <div class="col-md-9">
+              <div class="input-space">
+                <select
+                  formControlName="expirationYear"
+                  (change)="updateAvailableMonths($event)"
+                >
+                  <option *ngFor="let year of years" [value]="year">
+                    {{ year }}
+                  </option>
+                </select>
+                <span
+                  *ngIf="
+                    form.get('creditCardDetails.expirationYear')?.invalid &&
+                    form.get('creditCardDetails.expirationYear')?.touched
+                  "
+                  class="error"
+                  >Please select the expiration year on your credit card</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2">
               <label>*Credit Card Expiration Month:</label>
             </div>
             <div class="col-md-9">
@@ -382,28 +407,6 @@
                   "
                   class="error"
                   >Please select the expiration month on your credit card</span
-                >
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-2">
-              <label>*Credit Card Expiration Year:</label>
-            </div>
-            <div class="col-md-9">
-              <div class="input-space">
-                <select formControlName="expirationYear">
-                  <option *ngFor="let year of years" value="year">
-                    {{ year }}
-                  </option>
-                </select>
-                <span
-                  *ngIf="
-                    form.get('creditCardDetails.expirationYear')?.invalid &&
-                    form.get('creditCardDetails.expirationYear')?.touched
-                  "
-                  class="error"
-                  >Please select the expiration year on your credit card</span
                 >
               </div>
             </div>
@@ -479,7 +482,7 @@
           <button
             type="submit"
             class="btn btn-primary"
-            [disabled]="form.invalid"
+            [disabled]="form.invalid || cartItems.length < 1"
           >
             Confirm purchase
           </button>

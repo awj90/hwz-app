@@ -9,6 +9,7 @@ export interface BeforeLeavingComponent {
   confirmMessage(): string;
 }
 
+// confirm with user before leaving an unsaved form
 export const formGuard: CanDeactivateFn<BeforeLeavingComponent> = (
   component: BeforeLeavingComponent,
   currentRoute: ActivatedRouteSnapshot,

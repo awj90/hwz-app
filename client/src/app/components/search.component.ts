@@ -32,9 +32,9 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.createForm();
+    // subscribe to search input box's value changes to render 'live search' results
     this.searchSubscription$ = this.form.valueChanges
       .pipe(
-        tap((info) => console.info(info)),
         map((form) => form['keyword']),
         filter((keyword) => keyword.trim().length > 0),
         debounceTime(500)
@@ -52,6 +52,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.searchSubscription$.unsubscribe();
   }
 
+  // invoked when Enter key is pressed or Search button is clicked
   searchProducts(keyword: string) {
     this.router.navigate(['/search', keyword]);
     this.clearSearch();

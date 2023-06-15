@@ -16,13 +16,12 @@ export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
   totalPrice: number = 0; // excludes shipping fees if any
   shippingFee: number = 0;
   loading: boolean = true;
+  allMonths: number[] = [];
+  remainingMonthsInCurrentYear: number[] = [];
   months: number[] = [];
   years: number[] = [];
 
   constructor(private fb: FormBuilder, private cartService: CartService) {
-    for (let i = 1; i <= 12; i++) {
-      this.months.push(i);
-    }
     for (
       let i = new Date().getFullYear();
       i <= new Date().getFullYear() + 6;
@@ -30,11 +29,43 @@ export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
     ) {
       this.years.push(i);
     }
+    for (let i = 1; i <= 12; i++) {
+      this.allMonths.push(i);
+    }
+    for (let i = new Date().getMonth() + 1; i <= 12; i++) {
+      this.remainingMonthsInCurrentYear.push(i);
+    }
+    this.months = [...this.remainingMonthsInCurrentYear]; // create a separate copy
   }
 
   ngOnInit(): void {
     this.form = this.createForm();
     this.getCartDetails();
+  }
+
+  // set billing address fields equal to shipping address fields if user indicates so
+  onCheckOrUncheck($event: any) {
+    if ($event.target.checked) {
+      this.form.controls['billingAddress'].setValue(
+        this.form.controls['shippingAddress'].value
+      );
+    } else {
+      this.form.controls['billingAddress'].reset();
+    }
+  }
+
+  // if user's credit card expires in the current year year, only the remaining months in the current year should be shown
+  updateAvailableMonths($event: any): void {
+    if (+$event.target.value === new Date().getFullYear()) {
+      this.months = this.remainingMonthsInCurrentYear;
+    } else {
+      this.months = this.allMonths;
+    }
+  }
+
+  formSubmissionHandler() {
+    console.info(this.form.value);
+    this.form.reset();
   }
 
   formNotSaved(): boolean {
@@ -47,9 +78,9 @@ export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
 
   private getCartDetails() {
     this.loading = true;
-    this.cartItems = this.cartService.cartItems.slice(); // get a copy without modifying
+    this.cartItems = this.cartService.cartItems.slice(); // just get a copy without modifying
     this.shippingFee = this.cartService.shippingFee;
-    // using take 1 to allow Angular to manage the unsubscription
+    // using take 1 here to allow Angular to manage the unsubscription
     this.cartService.totalPrice.pipe(take(1)).subscribe({
       next: (totalPrice: number) => {
         this.totalPrice = totalPrice;
@@ -62,21 +93,6 @@ export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
       },
     });
     this.cartService.computeCartTotals(); // trigger an emission for take 1 to get
-  }
-
-  onCheckOrUncheck($event: any) {
-    if ($event.target.checked) {
-      this.form.controls['billingAddress'].setValue(
-        this.form.controls['shippingAddress'].value
-      );
-    } else {
-      this.form.controls['billingAddress'].reset();
-    }
-  }
-
-  formSubmissionHandler() {
-    console.info(this.form.value);
-    this.form.reset();
   }
 
   private createForm(): FormGroup {
@@ -108,21 +124,21 @@ export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
         nameOnCard: this.fb.control<string>('', [Validators.required]),
         cardNumber: this.fb.control<string>('', [
           Validators.required,
-          Validators.pattern(/^[0-9]{16}$/),
+          Validators.pattern(/^[0-9]{16}$/), // 16 digit regex for Visa and Mastercard credit card numbers
         ]),
         cvv: this.fb.control<string>('', [
           Validators.required,
-          Validators.pattern(/^[0-9]{3}$/),
+          Validators.pattern(/^[0-9]{3}$/), // 3 digit regex for Visa and Mastercard CVVs
         ]),
-        expirationMonth: this.fb.control<number>(new Date().getMonth(), [
+        expirationYear: this.fb.control<number>(this.years[0], [
           Validators.required,
         ]),
-        expirationYear: this.fb.control<number>(new Date().getFullYear(), [
+        expirationMonth: this.fb.control<number>(this.months[0], [
           Validators.required,
         ]),
       }),
       agreeToTermsAndConditions: this.fb.control<boolean>(true, [
-        Validators.requiredTrue,
+        Validators.requiredTrue, // required True
       ]),
       subscribeToMarketingEmails: this.fb.control<boolean>(true),
     });

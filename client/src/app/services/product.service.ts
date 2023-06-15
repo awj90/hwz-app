@@ -8,6 +8,7 @@ import { ProductCategory } from '../models/product-category';
 export class ProductService {
   private BASE_API_URL_ENDPOINT: string = 'http://localhost:8080/api';
 
+  // emit the result count of a MySQL query for pagination purposes (subscribed in ProductListComponent)
   resultCount = new Subject<number>();
 
   constructor(private http: HttpClient) {}
@@ -25,6 +26,10 @@ export class ProductService {
       );
   }
 
+  // GET /api/products/search/findByCategoryId?id=1&page=0&size=20
+  // select * from product where category_id = 1 offset 0 limit 20;
+  // @RequestParam Long id, @RequestParam(defaultValue = 0) int page, @RequestParam(defaultValue = 20) int size
+  // offset (page) and limit (size) are optional, defaults are 0 and 20 respectively
   getProductsByCategory(
     categoryId: number = 1,
     page: number = 0,
@@ -45,6 +50,10 @@ export class ProductService {
       );
   }
 
+  // GET /api/products/search/findByNameContainingOrDescriptionContaining?name=fred&description=fred&page=0&size=20
+  // select * from product where name like '%fred%' or description like '%fred%' offset 0 limit 20;
+  // @RequestParam String name, @RequestParam String description, @RequestParam(defaultValue = 0) int page, @RequestParam(defaultValue = 20) int size
+  // offset (page) and limit (size) are optional, defaults are 0 and 20 respectively
   getProductsBySearchKeyword(
     searchKeyword: string,
     page: number = 0,
@@ -73,12 +82,16 @@ export class ProductService {
       .pipe(map((resp) => resp._embedded.productCategory));
   }
 
+  // GET /api/products/1
+  // select * from product where id = 1
+  // @PathVariable Long id
   getProductById(id: number): Observable<Product> {
     const FULL_API_URL_ENDPOINT = `${this.BASE_API_URL_ENDPOINT}/products/${id}`;
     return this.http.get<Product>(FULL_API_URL_ENDPOINT);
   }
 }
 
+// JSON format of the server response
 interface ApiGetResponseForProducts {
   _embedded: {
     products: Product[];
@@ -91,6 +104,7 @@ interface ApiGetResponseForProducts {
   };
 }
 
+// JSON format of the server response
 interface ApiGetResponseForProductCategories {
   _embedded: {
     productCategory: ProductCategory[];

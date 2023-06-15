@@ -29,7 +29,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.countSub$ = this.productService.resultCount.subscribe(
-      (count) => (this.count = count)
+      (count) => (this.count = count) // subscribe to result count of MySQL query to be used for pagination
     );
     // http and activated route subscriptions are unsubscribed automatically by ng
     this.activatedRoute.params.subscribe(() => this.getProducts());

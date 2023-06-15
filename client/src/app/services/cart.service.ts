@@ -19,30 +19,30 @@ export class CartService {
       // item exists in cart, increment item's quantity by one
       this.cartItems[index].quantity++;
     }
-
     this.computeCartTotals();
   }
 
   removeOneFromCart(cartItem: CartItem): void {
     const index = this.cartItems.findIndex((item) => item.id === cartItem.id);
     if (index === -1) {
-      return;
+      return; // do nothing if item does not exist in cart
     }
     if (this.cartItems[index].quantity > 1) {
-      this.cartItems[index].quantity--;
+      this.cartItems[index].quantity--; // decrement quantity by 1
     } else {
-      this.cartItems.splice(index, 1);
+      this.cartItems.splice(index, 1); // completely remove from cart if quantity reached 0
     }
   }
 
   removeFromCart(cartItem: CartItem): void {
     const index = this.cartItems.findIndex((item) => item.id === cartItem.id);
     if (index === -1) {
-      return;
+      return; // do nothing if item does not exist in cart
     }
-    this.cartItems.splice(index, 1);
+    this.cartItems.splice(index, 1); // completely remove from cart
   }
 
+  // emits the total price and total item to subscribers in the CartDetails, CartStatus, Checkout components
   computeCartTotals(): void {
     let totalPrice: number = 0;
     let totalItems: number = 0;
