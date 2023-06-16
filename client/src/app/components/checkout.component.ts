@@ -1,12 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { CartItem } from '../models/cart-item';
 import { CartService } from '../services/cart.service';
-import { take, firstValueFrom, Subscription, tap } from 'rxjs';
+import { take, firstValueFrom, Subscription } from 'rxjs';
 import { BeforeLeavingComponent } from '../utils';
 import { Country } from '../models/country';
 import { LocationService } from '../services/location.service';
 import { State } from '../models/state';
+import { CustomValidators } from '../models/custom-validators';
 
 @Component({
   selector: 'app-checkout',
@@ -73,16 +79,17 @@ export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
   // disable and set billing address fields equal to shipping address fields if user indicates so
   onCheckOrUncheck($event: any) {
     if ($event.target.checked) {
-      this.form.get('billingAddress')?.disable();
+      this.billingAddressStates = this.shippingAddressStates;
       this.form.controls['billingAddress'].setValue(
         this.form.controls['shippingAddress'].value
       );
-      this.billingAddressStates = this.shippingAddressStates;
+      this.form.get('billingAddress')?.disable();
       this.addressSubscription$ = this.form.controls[
         'shippingAddress'
-      ].valueChanges.subscribe((changes) =>
-        this.form.controls['billingAddress'].setValue(changes)
-      );
+      ].valueChanges.subscribe((changes) => {
+        this.billingAddressStates = this.shippingAddressStates;
+        this.form.controls['billingAddress'].setValue(changes);
+      });
     } else {
       this.form.get('billingAddress')?.enable();
       this.form.controls['billingAddress'].reset();
@@ -101,6 +108,7 @@ export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
   }
 
   getStatesForSelectedCountry(addressType: string): void {
+    this.form.get([addressType, 'state'])?.reset();
     firstValueFrom(
       this.locationService.getStates(this.form.get(addressType)?.value.country)
     )
@@ -123,6 +131,11 @@ export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
   }
 
   formSubmissionHandler() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return; // do nothing and display all error messages if form is still invalid
+    }
+
     console.info(this.form.value);
     this.form.reset();
   }
@@ -157,46 +170,74 @@ export class CheckoutComponent implements OnInit, BeforeLeavingComponent {
   private createForm(): FormGroup {
     return this.fb.group({
       customerDetails: this.fb.group({
-        firstName: this.fb.control<string>('', [Validators.required]),
-        lastName: this.fb.control<string>('', [Validators.required]),
-        email: this.fb.control<string>('', [
+        firstName: new FormControl<string>('', [
+          Validators.required,
+          CustomValidators.whiteSpaceCheck,
+        ]),
+        lastName: new FormControl<string>('', [
+          Validators.required,
+          CustomValidators.whiteSpaceCheck,
+        ]),
+        email: new FormControl<string>('', [
           Validators.required,
           Validators.email,
         ]),
       }),
       shippingAddress: this.fb.group({
-        country: this.fb.control<string>(this.currentCountryCode, [
+        country: new FormControl<string>(this.currentCountryCode, [
           Validators.required,
         ]),
-        street: this.fb.control<string>('', [Validators.required]),
-        city: this.fb.control<string>('', [Validators.required]),
-        state: this.fb.control<string>('', [Validators.required]),
-        postalCode: this.fb.control<string>('', [Validators.required]),
+        street: new FormControl<string>('', [
+          Validators.required,
+          CustomValidators.whiteSpaceCheck,
+        ]),
+        city: new FormControl<string>('', [
+          Validators.required,
+          CustomValidators.whiteSpaceCheck,
+        ]),
+        state: new FormControl<string>('', [Validators.required]),
+        postalCode: new FormControl<string>('', [
+          Validators.required,
+          CustomValidators.whiteSpaceCheck,
+        ]),
       }),
       billingAddress: this.fb.group({
-        country: this.fb.control<string>(this.currentCountryCode, [
+        country: new FormControl<string>(this.currentCountryCode, [
           Validators.required,
         ]),
-        street: this.fb.control<string>('', [Validators.required]),
-        city: this.fb.control<string>('', [Validators.required]),
-        state: this.fb.control<string>('', [Validators.required]),
-        postalCode: this.fb.control<string>('', [Validators.required]),
+        street: new FormControl<string>('', [
+          Validators.required,
+          CustomValidators.whiteSpaceCheck,
+        ]),
+        city: new FormControl<string>('', [
+          Validators.required,
+          CustomValidators.whiteSpaceCheck,
+        ]),
+        state: new FormControl<string>('', [Validators.required]),
+        postalCode: new FormControl<string>('', [
+          Validators.required,
+          CustomValidators.whiteSpaceCheck,
+        ]),
       }),
       creditCardDetails: this.fb.group({
-        cardType: this.fb.control<string>('', [Validators.required]),
-        nameOnCard: this.fb.control<string>('', [Validators.required]),
-        cardNumber: this.fb.control<string>('', [
+        cardType: new FormControl<string>('', [Validators.required]),
+        nameOnCard: new FormControl<string>('', [
+          Validators.required,
+          CustomValidators.whiteSpaceCheck,
+        ]),
+        cardNumber: new FormControl<string>('', [
           Validators.required,
           Validators.pattern(/^[0-9]{16}$/), // 16 digit regex for Visa and Mastercard credit card numbers
+          CustomValidators.invalidCreditCardCheck, // luhn's algorithm to validate credit card number
         ]),
-        cvv: this.fb.control<string>('', [
+        cvv: new FormControl<string>('', [
           Validators.required,
           Validators.pattern(/^[0-9]{3}$/), // 3 digit regex for Visa and Mastercard CVVs
         ]),
-        expirationYear: this.fb.control<number>(this.years[0], [
+        expirationYear: new FormControl<number>(this.years[0], [
           Validators.required,
         ]),
-        expirationMonth: this.fb.control<number>(this.months[0], [
+        expirationMonth: new FormControl<number>(this.months[0], [
           Validators.required,
         ]),
       }),

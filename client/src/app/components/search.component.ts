@@ -8,7 +8,7 @@ import {
 import { Router } from '@angular/router';
 import { ProductService } from '../services/product.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Observable, Subscription, debounceTime, filter, map, tap } from 'rxjs';
+import { Observable, Subscription, debounceTime, filter, map } from 'rxjs';
 import { Product } from '../models/product';
 
 @Component({
