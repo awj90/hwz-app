@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CartItem } from '../models/cart-item';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class CartService {
   cartItems: CartItem[] = [];
   shippingFee: number = 0;
-  totalPrice = new Subject<number>();
-  totalItems = new Subject<number>();
+  totalPrice = new BehaviorSubject<number>(0);
+  totalItems = new BehaviorSubject<number>(0);
 
   addToCart(cartItem: CartItem): void {
     const index = this.cartItems.findIndex((item) => item.id === cartItem.id);

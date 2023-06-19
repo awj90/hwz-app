@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CartItem } from '../models/cart-item';
 import { CartService } from '../services/cart.service';
-import { take } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-cart-details',
   templateUrl: './cart-details.component.html',
   styleUrls: ['./cart-details.component.css'],
 })
-export class CartDetailsComponent implements OnInit {
+export class CartDetailsComponent implements OnInit, OnDestroy {
   cartItems: CartItem[] = [];
   totalPrice: number = 0;
   totalItems: number = 0;
+  totalPriceSubscription$!: Subscription;
+  totalItemsSubscription$!: Subscription;
   shippingFee: number = 0;
   loading: boolean = true;
 
@@ -21,12 +23,16 @@ export class CartDetailsComponent implements OnInit {
     this.getCartDetails();
   }
 
+  ngOnDestroy(): void {
+    this.totalPriceSubscription$.unsubscribe();
+    this.totalItemsSubscription$.unsubscribe();
+  }
+
   private getCartDetails() {
     this.loading = true;
     this.cartItems = this.cartService.cartItems.slice(); // get a copy without modifying
     this.shippingFee = this.cartService.shippingFee;
-    // using take 1 to allow Angular to manage the unsubscription
-    this.cartService.totalPrice.pipe(take(1)).subscribe({
+    this.totalPriceSubscription$ = this.cartService.totalPrice.subscribe({
       next: (totalPrice: number) => {
         this.totalPrice = totalPrice;
         this.loading = false;
@@ -37,8 +43,7 @@ export class CartDetailsComponent implements OnInit {
         this.loading = false;
       },
     });
-    // using take 1 to allow Angular to manage the unsubscription
-    this.cartService.totalItems.pipe(take(1)).subscribe({
+    this.totalItemsSubscription$ = this.cartService.totalItems.subscribe({
       next: (totalItems: number) => {
         this.totalItems = totalItems;
         this.loading = false;
@@ -49,7 +54,6 @@ export class CartDetailsComponent implements OnInit {
         this.loading = false;
       },
     });
-    this.cartService.computeCartTotals(); // trigger an emission for take 1 to get
   }
 
   incrementQuantity(cartItem: CartItem) {

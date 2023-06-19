@@ -79,7 +79,7 @@
                   (change)="getStatesForSelectedCountry('shippingAddress')"
                 >
                   <option
-                    *ngFor="let country of countries$ | async"
+                    *ngFor="let country of countries"
                     [value]="country.code"
                     [selected]="country.code === currentCountryCode"
                   >
@@ -144,7 +144,7 @@
                 <select formControlName="state">
                   <option
                     *ngFor="let state of shippingAddressStates"
-                    [value]="state.id"
+                    [value]="state.name"
                   >
                     {{ state.name }}
                   </option>
@@ -167,12 +167,12 @@
                 <input
                   type="text"
                   placeholder="Zip / Postal code"
-                  formControlName="postalCode"
+                  formControlName="zipCode"
                 />
                 <span
                   *ngIf="
-                    form.get('shippingAddress.postalCode')?.invalid &&
-                    form.get('shippingAddress.postalCode')?.touched
+                    form.get('shippingAddress.zipCode')?.invalid &&
+                    form.get('shippingAddress.zipCode')?.touched
                   "
                   class="error"
                   >Please input a postal code</span
@@ -203,7 +203,7 @@
                   (change)="getStatesForSelectedCountry('billingAddress')"
                 >
                   <option
-                    *ngFor="let country of countries$ | async"
+                    *ngFor="let country of countries"
                     [value]="country.code"
                     [selected]="country.code === currentCountryCode"
                   >
@@ -268,7 +268,7 @@
                 <select formControlName="state">
                   <option
                     *ngFor="let state of billingAddressStates"
-                    [value]="state.id"
+                    [value]="state.name"
                   >
                     {{ state.name }}
                   </option>
@@ -291,12 +291,12 @@
                 <input
                   type="text"
                   placeholder="Zip / Postal code"
-                  formControlName="postalCode"
+                  formControlName="zipCode"
                 />
                 <span
                   *ngIf="
-                    form.get('billingAddress.postalCode')?.invalid &&
-                    form.get('billingAddress.postalCode')?.touched
+                    form.get('billingAddress.zipCode')?.invalid &&
+                    form.get('billingAddress.zipCode')?.touched
                   "
                   class="error"
                   >Please input a postal code</span

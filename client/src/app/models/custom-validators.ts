@@ -12,6 +12,11 @@ export class CustomValidators {
     formControl: FormControl
   ): ValidationErrors | null {
     let cardNumber: string = formControl.value;
+
+    if (!cardNumber) {
+      return { invalidCreditCardCheck: true };
+    }
+
     if (!cardNumber.length) {
       return { invalidCreditCardCheck: true };
     }
