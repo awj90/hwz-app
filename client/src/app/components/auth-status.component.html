@@ -1,0 +1,22 @@
+<div class="login-status-header">
+  <div *ngIf="isAuthenticated && username" class="login-status-user-info">
+    Good {{ hour < 12 ? "Morning" : hour < 17 ? "Afternoon" : "Evening" }},
+    {{ username | titlecase }}!
+  </div>
+  <button
+    *ngIf="!isAuthenticated"
+    [routerLink]="['/login']"
+    type="button"
+    class="security-btn"
+  >
+    Sign In
+  </button>
+  <button
+    *ngIf="isAuthenticated"
+    (click)="logout()"
+    type="button"
+    class="security-btn"
+  >
+    Sign Out
+  </button>
+</div>

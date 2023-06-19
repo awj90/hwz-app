@@ -3,24 +3,43 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { HttpClientModule } from '@angular/common/http';
 import { Routes, RouterModule } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
+
+import {
+  OktaAuthModule,
+  OktaCallbackComponent,
+  OktaConfig,
+} from '@okta/okta-angular';
+import { OktaAuth } from '@okta/okta-auth-js';
 
 import { AppComponent } from './app.component';
 import { ProductListComponent } from './components/product-list.component';
-import { ProductService } from './services/product.service';
 import { SideBarComponent } from './components/side-bar.component';
 import { SearchComponent } from './components/search.component';
-import { ReactiveFormsModule } from '@angular/forms';
 import { ProductComponent } from './components/product.component';
 import { CartStatusComponent } from './components/cart-status.component';
-import { CartService } from './services/cart.service';
 import { CartDetailsComponent } from './components/cart-details.component';
 import { CheckoutComponent } from './components/checkout.component';
-import { formGuard } from './utils';
+import { LoginComponent } from './components/login.component';
+import { AuthStatusComponent } from './components/auth-status.component';
+
+import { ProductService } from './services/product.service';
+import { CartService } from './services/cart.service';
 import { LocationService } from './services/location.service';
 import { CheckoutService } from './services/checkout.service';
 
+import { formGuard } from './utils';
+
+import AppConfig from './config/app-config';
+
+const oktaConfig = AppConfig['oidc'];
+const oktaAuth = new OktaAuth(oktaConfig);
+const moduleConfig: OktaConfig = { oktaAuth };
+
 const appRoutes: Routes = [
+  { path: 'login/callback', component: OktaCallbackComponent },
+  { path: 'login', component: LoginComponent },
   {
     path: 'checkout',
     component: CheckoutComponent,
@@ -55,12 +74,15 @@ const appRoutes: Routes = [
     CartStatusComponent,
     CartDetailsComponent,
     CheckoutComponent,
+    LoginComponent,
+    AuthStatusComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
     NgxPaginationModule,
+    OktaAuthModule.forRoot(moduleConfig),
     RouterModule.forRoot(appRoutes),
   ],
   providers: [ProductService, CartService, LocationService, CheckoutService],

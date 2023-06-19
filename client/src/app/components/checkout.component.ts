@@ -162,7 +162,6 @@ export class CheckoutComponent
       return; // do nothing and display all error messages if form is still invalid
     }
     const formSubmission: FormFields = this.form.value;
-    console.info(formSubmission);
 
     const order = new Order(this.totalItems, this.totalPrice);
 
