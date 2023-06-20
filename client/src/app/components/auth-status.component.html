@@ -17,6 +17,13 @@
     type="button"
     class="security-btn"
   >
-    Sign Out
+    Sign Out</button
+  >&nbsp;
+  <button
+    *ngIf="isAuthenticated"
+    [routerLink]="['/protected']"
+    class="security-btn"
+  >
+    Exclusive Deals for Members only
   </button>
 </div>

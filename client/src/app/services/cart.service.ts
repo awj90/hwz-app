@@ -8,6 +8,16 @@ export class CartService {
   shippingFee: number = 0;
   totalPrice = new BehaviorSubject<number>(0);
   totalItems = new BehaviorSubject<number>(0);
+  clientStorage: Storage = localStorage;
+
+  constructor() {
+    // fetch session-stored cart data if any
+    let value: string | null = this.clientStorage.getItem('cart');
+    if (value) {
+      this.cartItems = JSON.parse(value);
+      this.computeCartTotals();
+    }
+  }
 
   addToCart(cartItem: CartItem): void {
     const index = this.cartItems.findIndex((item) => item.id === cartItem.id);
@@ -32,6 +42,7 @@ export class CartService {
     } else {
       this.cartItems.splice(index, 1); // completely remove from cart if quantity reached 0
     }
+    this.computeCartTotals();
   }
 
   removeFromCart(cartItem: CartItem): void {
@@ -40,6 +51,7 @@ export class CartService {
       return; // do nothing if item does not exist in cart
     }
     this.cartItems.splice(index, 1); // completely remove from cart
+    this.computeCartTotals();
   }
 
   // emits the total price and total item to subscribers in the CartDetails, CartStatus, Checkout components
@@ -52,5 +64,10 @@ export class CartService {
     }
     this.totalPrice.next(totalPrice);
     this.totalItems.next(totalItems);
+    this.saveCart();
+  }
+
+  saveCart(): void {
+    this.clientStorage.setItem('cart', JSON.stringify(this.cartItems));
   }
 }

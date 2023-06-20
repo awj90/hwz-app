@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 
 import {
+  OktaAuthGuard,
   OktaAuthModule,
   OktaCallbackComponent,
   OktaConfig,
@@ -23,13 +24,14 @@ import { CartDetailsComponent } from './components/cart-details.component';
 import { CheckoutComponent } from './components/checkout.component';
 import { LoginComponent } from './components/login.component';
 import { AuthStatusComponent } from './components/auth-status.component';
+import { ProtectedComponent } from './components/protected.component';
 
 import { ProductService } from './services/product.service';
 import { CartService } from './services/cart.service';
 import { LocationService } from './services/location.service';
 import { CheckoutService } from './services/checkout.service';
 
-import { formGuard } from './utils';
+import { formGuard, authGuard } from './utils';
 
 import AppConfig from './config/app-config';
 
@@ -38,6 +40,12 @@ const oktaAuth = new OktaAuth(oktaConfig);
 const moduleConfig: OktaConfig = { oktaAuth };
 
 const appRoutes: Routes = [
+  {
+    path: 'protected',
+    component: ProtectedComponent,
+    canActivate: [OktaAuthGuard],
+    data: { onAuthRequired: authGuard },
+  },
   { path: 'login/callback', component: OktaCallbackComponent },
   { path: 'login', component: LoginComponent },
   {
@@ -76,6 +84,7 @@ const appRoutes: Routes = [
     CheckoutComponent,
     LoginComponent,
     AuthStatusComponent,
+    ProtectedComponent,
   ],
   imports: [
     BrowserModule,
