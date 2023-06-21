@@ -68,6 +68,7 @@ export class CartService {
   }
 
   saveCart(): void {
+    // persist cart
     this.clientStorage.setItem('cart', JSON.stringify(this.cartItems));
   }
 }

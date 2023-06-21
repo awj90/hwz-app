@@ -36,9 +36,15 @@ public class CheckoutService {
         order.setShippingAddress(purchase.getShippingAddress());
 
         Customer customer = purchase.getCustomer();
+        Customer existingCustomer = customerRepository.findByEmail(customer.getEmail()); // email is unique in MySQL's customer table as a constraint
+
+        if (existingCustomer != null) {
+            customer = existingCustomer;
+        }
+
         customer.addOrder(order);
 
-        customerRepository.save(customer);
+        customerRepository.save(customer); // inserts a new customer if customer did not exist, or updates an existing customer with his/her additional order
 
         return new PurchaseConfirmation(orderId);
     }

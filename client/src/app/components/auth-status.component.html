@@ -24,6 +24,14 @@
     [routerLink]="['/protected']"
     class="security-btn"
   >
-    Exclusive Deals for Members only
+    My Member Benefits
+  </button>
+  &nbsp;
+  <button
+    *ngIf="isAuthenticated"
+    [routerLink]="['/order-history']"
+    class="security-btn"
+  >
+    My Orders
   </button>
 </div>

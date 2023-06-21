@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
@@ -14,12 +15,16 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.EntityType;
 import sg.edu.nus.iss.server.models.Country;
+import sg.edu.nus.iss.server.models.Order;
 import sg.edu.nus.iss.server.models.Product;
 import sg.edu.nus.iss.server.models.ProductCategory;
 import sg.edu.nus.iss.server.models.State;
 
 @Configuration
 public class DataRestConfig implements RepositoryRestConfigurer {
+
+    @Value("${allowed.origins}")
+    private String[] allowedOrigins;
 
     @Autowired
     private EntityManager entityManager;
@@ -28,22 +33,28 @@ public class DataRestConfig implements RepositoryRestConfigurer {
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
 
         // Set up array of disabled HttpMethods
-        HttpMethod[] disabledMethods = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE};
+        HttpMethod[] disabledMethods = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PATCH};
 
-        // disable PUT, POST, DELETE methods for the Product class
+        // disable PUT, POST, DELETE, PATCH methods for the Product class
         disableHttpMethods(config, disabledMethods, Product.class);
 
-        // disable PUT, POST, DELETE methods for the ProductCategory class
+        // disable PUT, POST, DELETE, PATCH methods for the ProductCategory class
         disableHttpMethods(config, disabledMethods, ProductCategory.class);
 
-        // disable PUT, POST, DELETE methods for the Country class
+        // disable PUT, POST, DELETE, PATCH methods for the Country class
         disableHttpMethods(config, disabledMethods, Country.class);
 
-        // disable PUT, POST, DELETE methods for the State class
+        // disable PUT, POST, DELETE, PATCH methods for the State class
         disableHttpMethods(config, disabledMethods, State.class);
+
+         // disable PUT, POST, DELETE, PATCH methods for the Order class
+        disableHttpMethods(config, disabledMethods, Order.class);
 
         // explicitly expose product ids and product category ids in API responses
         exposeIds(config);
+
+        // configure cors mappings
+        cors.addMapping(config.getBasePath() + "/**").allowedOrigins(allowedOrigins);
     }
 
     private void exposeIds(RepositoryRestConfiguration config) {

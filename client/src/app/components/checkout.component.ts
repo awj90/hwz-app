@@ -46,6 +46,7 @@ export class CheckoutComponent
   currentCountryCode!: string;
   shippingAddressStates: State[] = [];
   billingAddressStates: State[] = [];
+  clientStorage: Storage = sessionStorage;
 
   constructor(
     private fb: FormBuilder,
@@ -91,6 +92,7 @@ export class CheckoutComponent
 
     // initialize form group
     this.form = this.createForm();
+    this.autopopulateFormFields();
     this.getCartDetails();
   }
 
@@ -249,6 +251,17 @@ export class CheckoutComponent
         this.loading = false;
       },
     });
+  }
+
+  private autopopulateFormFields(): void {
+    const customer = this.clientStorage.getItem('customer');
+    if (customer) {
+      const user = JSON.parse(customer);
+      this.form.get(['customerDetails', 'email'])?.setValue(user.email);
+      this.form.get(['customerDetails', 'firstName'])?.setValue(user.firstName);
+      this.form.get(['customerDetails', 'lastName'])?.setValue(user.lastName);
+      this.form.get('customerDetails')?.disable();
+    }
   }
 
   private createForm(): FormGroup {

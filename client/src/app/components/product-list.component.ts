@@ -17,7 +17,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   activeSearchKey: string = '';
   loading: boolean = true;
   tableSize: number = 3;
-  page: number = 1;
+  page: number = 1; // page 1 in ngx-pagination = page 0 in spring-boot Pageable
   count: number = 0;
   countSub$!: Subscription;
 
@@ -56,6 +56,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   private getProducts() {
     this.loading = true;
+    this.products = [];
     if (this.activatedRoute.snapshot.paramMap.has('keyword')) {
       this.getProductsBySearchKey();
       return;

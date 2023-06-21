@@ -25,11 +25,13 @@ import { CheckoutComponent } from './components/checkout.component';
 import { LoginComponent } from './components/login.component';
 import { AuthStatusComponent } from './components/auth-status.component';
 import { ProtectedComponent } from './components/protected.component';
+import { OrdersHistoryComponent } from './components/orders-history.component';
 
 import { ProductService } from './services/product.service';
 import { CartService } from './services/cart.service';
 import { LocationService } from './services/location.service';
 import { CheckoutService } from './services/checkout.service';
+import { OrdersService } from './services/orders.service';
 
 import { formGuard, authGuard } from './utils';
 
@@ -40,6 +42,12 @@ const oktaAuth = new OktaAuth(oktaConfig);
 const moduleConfig: OktaConfig = { oktaAuth };
 
 const appRoutes: Routes = [
+  {
+    path: 'order-history',
+    component: OrdersHistoryComponent,
+    canActivate: [OktaAuthGuard],
+    data: { onAuthRequired: authGuard },
+  },
   {
     path: 'protected',
     component: ProtectedComponent,
@@ -85,6 +93,7 @@ const appRoutes: Routes = [
     LoginComponent,
     AuthStatusComponent,
     ProtectedComponent,
+    OrdersHistoryComponent,
   ],
   imports: [
     BrowserModule,
@@ -94,7 +103,13 @@ const appRoutes: Routes = [
     OktaAuthModule.forRoot(moduleConfig),
     RouterModule.forRoot(appRoutes),
   ],
-  providers: [ProductService, CartService, LocationService, CheckoutService],
+  providers: [
+    ProductService,
+    CartService,
+    LocationService,
+    CheckoutService,
+    OrdersService,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

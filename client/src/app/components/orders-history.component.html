@@ -1,0 +1,47 @@
+<div class="main-content">
+  <div class="section-content section-content-p30">
+    <div class="container-fluid">
+      <div *ngIf="loading" class="alert alert-warning col-md-12">
+        Loading...
+      </div>
+      <div
+        *ngIf="!loading && pastOrders.length < 1"
+        class="alert alert-warning col-md-12"
+        role="alert"
+      >
+        You have not made any orders yet!
+      </div>
+      <div *ngIf="!loading && pastOrders.length > 0">
+        <h3>Your Order History</h3>
+        <span>
+          Displaying
+          <select (change)="onLimitChange(+limit.value)" #limit>
+            <option
+              *ngFor="let i of countArray"
+              [value]="i"
+              [selected]="i === pastOrders.length"
+            >
+              {{ i }}
+            </option>
+          </select>
+          most recent orders out of {{ count }} orders
+        </span>
+        <table class="table table-bordered">
+          <tr>
+            <th width="25%">Order Id</th>
+            <th width="25%">Total Price</th>
+            <th width="25%">Total Quantity of items in Order</th>
+            <th width="25%">Date of order received</th>
+          </tr>
+          <tr *ngFor="let order of pastOrders">
+            <td>{{ order.orderTrackingNumber }}</td>
+            <td>{{ order.totalPrice | currency : "USD" }}</td>
+            <td>{{ order.totalQuantity }}</td>
+            <td>{{ order.dateCreated | date }}</td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

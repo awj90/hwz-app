@@ -2,6 +2,7 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { OKTA_AUTH, OktaAuthStateService } from '@okta/okta-angular';
 import { OktaAuth } from '@okta/okta-auth-js';
 import { Subscription } from 'rxjs';
+import { Customer } from '../models/customer';
 
 @Component({
   selector: 'app-auth-status',
@@ -13,6 +14,7 @@ export class AuthStatusComponent implements OnInit, OnDestroy {
   username!: string;
   hour: number = new Date().getHours() + 1;
   authState$!: Subscription;
+  clientStorage: Storage = sessionStorage;
 
   constructor(
     @Inject(OKTA_AUTH) private oktaAuth: OktaAuth,
@@ -26,6 +28,12 @@ export class AuthStatusComponent implements OnInit, OnDestroy {
         if (this.isAuthenticated) {
           this.oktaAuth.getUser().then((userClaims) => {
             this.username = userClaims.given_name as string;
+            const lastName: string = userClaims.family_name as string;
+            const email: string = userClaims.email as string;
+            this.clientStorage.setItem(
+              'customer',
+              JSON.stringify(new Customer(this.username, lastName, email))
+            );
           });
         }
       }
@@ -37,6 +45,8 @@ export class AuthStatusComponent implements OnInit, OnDestroy {
   }
 
   logout() {
+    // clear session storage and sign out
+    this.clientStorage.removeItem('customer');
     this.oktaAuth.signOut();
   }
 }

@@ -13,6 +13,10 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
+  // GET /api/products?page=0&size=20
+  // select * from product where category_id = 1 offset 0 limit 20;
+  // @RequestParam(defaultValue = 0) int page, @RequestParam(defaultValue = 20) int size
+  // offset (page) and limit (size) are optional, defaults are 0 and 20 respectively
   getAllProducts(page: number = 0, size: number = 20): Observable<Product[]> {
     const FULL_API_URL_ENDPOINT = `${this.SPRINGBOOT_BASE_API_URL_ENDPOINT}/products`;
 
