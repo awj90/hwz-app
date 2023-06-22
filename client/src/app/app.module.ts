@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { Routes, RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -32,6 +32,7 @@ import { CartService } from './services/cart.service';
 import { LocationService } from './services/location.service';
 import { CheckoutService } from './services/checkout.service';
 import { OrdersService } from './services/orders.service';
+import { AuthInterceptorService } from './services/auth-interceptor.service';
 
 import { formGuard, authGuard } from './utils';
 
@@ -109,6 +110,11 @@ const appRoutes: Routes = [
     LocationService,
     CheckoutService,
     OrdersService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptorService,
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
 })

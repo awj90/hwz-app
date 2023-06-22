@@ -163,7 +163,8 @@ export class CheckoutComponent
       this.form.markAllAsTouched();
       return; // do nothing and display all error messages if form is still invalid
     }
-    const formSubmission: FormFields = this.form.value;
+
+    const formSubmission: FormFields = this.form.getRawValue(); // get all values including disabled fields
 
     const order = new Order(this.totalItems, this.totalPrice);
 
@@ -176,9 +177,7 @@ export class CheckoutComponent
       formSubmission['customerDetails']['email']
     );
     let shippingAddress: Address = formSubmission['shippingAddress'];
-    let billingAddress: Address = !!formSubmission.billingAddress
-      ? formSubmission['billingAddress']
-      : shippingAddress;
+    let billingAddress: Address = formSubmission['billingAddress'];
     const shippingCountry = this.countries.find(
       (country) => country.code === shippingAddress.country
     );
@@ -256,7 +255,7 @@ export class CheckoutComponent
   private autopopulateFormFields(): void {
     const customer = this.clientStorage.getItem('customer');
     if (customer) {
-      const user = JSON.parse(customer);
+      const user: Customer = JSON.parse(customer);
       this.form.get(['customerDetails', 'email'])?.setValue(user.email);
       this.form.get(['customerDetails', 'firstName'])?.setValue(user.firstName);
       this.form.get(['customerDetails', 'lastName'])?.setValue(user.lastName);
@@ -359,7 +358,7 @@ interface FormFields {
     state: string;
     zipCode: string;
   };
-  billingAddress?: {
+  billingAddress: {
     country: string;
     street: string;
     city: string;
