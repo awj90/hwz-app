@@ -3,16 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { Country } from '../models/country';
 import { State } from '../models/state';
+import { environment } from 'src/environments/environment.development';
 
 @Injectable()
 export class LocationService {
-  private SPRINGBOOT_BASE_API_URL_ENDPOINT: string =
-    'http://localhost:8080/api';
   NUMBER_OF_COUNTRIES: number = 250; // constant
   NUMBER_OF_STATES: number = 250; // constant
-
-  private EXTERNAL_IP_GEOLOCATION_API_URL_ENDPOINT: string =
-    'https://jsonip.com/';
+  SPRINGBOOT_BASE_API_URL_ENDPOINT: string = environment['serverApiUrl'];
+  EXTERNAL_IP_GEOLOCATION_API_URL_ENDPOINT: string = 'https://jsonip.com/';
 
   constructor(private http: HttpClient) {}
 

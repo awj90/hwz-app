@@ -2,11 +2,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, map, tap } from 'rxjs';
 import { OrdersHistory } from '../models/orders-history';
+import { environment } from 'src/environments/environment.development';
 
 @Injectable()
 export class OrdersService {
-  private SPRINGBOOT_BASE_API_URL_ENDPOINT: string =
-    'http://localhost:8080/api';
+  SPRINGBOOT_BASE_API_URL_ENDPOINT: string = environment['serverApiUrl'];
 
   constructor(private http: HttpClient) {}
 

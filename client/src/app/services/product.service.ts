@@ -3,10 +3,11 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, map, tap } from 'rxjs';
 import { Product } from '../models/product';
 import { ProductCategory } from '../models/product-category';
+import { environment } from 'src/environments/environment.development';
 
 @Injectable()
 export class ProductService {
-  private SPRINGBOOT_BASE_API_URL_ENDPOINT: string = 'http://localhost:8080/api';
+  SPRINGBOOT_BASE_API_URL_ENDPOINT: string = environment['serverApiUrl'];
 
   // emit the result count of a MySQL query for pagination purposes (subscribed in ProductListComponent)
   resultCount = new Subject<number>();
