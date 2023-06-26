@@ -20,6 +20,8 @@ import { OrderItem } from '../models/order-item';
 import { Customer } from '../models/customer';
 import { Address } from '../models/address';
 import { Purchase } from '../models/purchase';
+import { environment } from 'src/environments/environment.development';
+import { Payment } from '../models/payment';
 
 @Component({
   selector: 'app-checkout',
@@ -47,6 +49,11 @@ export class CheckoutComponent
   shippingAddressStates: State[] = [];
   billingAddressStates: State[] = [];
   clientStorage: Storage = sessionStorage;
+  stripe = Stripe(environment.stripePublishableKey);
+  payment: Payment = new Payment(0, 'USD', '');
+  cardElement: any;
+  creditCardErrors: any = '';
+  isCreditCardProcessing: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -92,6 +99,7 @@ export class CheckoutComponent
 
     // initialize form group
     this.form = this.createForm();
+    this.setupStripeFormFields();
     this.autopopulateFormFields();
     this.getCartDetails();
   }
@@ -163,7 +171,6 @@ export class CheckoutComponent
       this.form.markAllAsTouched();
       return; // do nothing and display all error messages if form is still invalid
     }
-
     const formSubmission: FormFields = this.form.getRawValue(); // get all values including disabled fields
 
     const order = new Order(this.totalItems, this.totalPrice);
@@ -178,17 +185,18 @@ export class CheckoutComponent
     );
     let shippingAddress: Address = formSubmission['shippingAddress'];
     let billingAddress: Address = formSubmission['billingAddress'];
+    const billingAddressCountryCode: string = billingAddress.country;
     const shippingCountry = this.countries.find(
       (country) => country.code === shippingAddress.country
     );
     if (!!shippingCountry) {
-      shippingAddress['country'] = shippingCountry.name;
+      shippingAddress.country = shippingCountry.name;
     }
     const billingCountry = this.countries.find(
       (country) => country.code === billingAddress.country
     );
     if (!!billingCountry) {
-      billingAddress['country'] = billingCountry.name;
+      billingAddress.country = billingCountry.name;
     }
 
     const purchase: Purchase = new Purchase(
@@ -199,21 +207,85 @@ export class CheckoutComponent
       orderItems
     );
 
-    this.checkoutService.placeOrder(purchase).subscribe({
-      next: (response) => {
-        alert(
-          `Your order has been received successfully.\n Order id: ${response.orderId}`
-        );
-        this.cartService.cartItems = [];
-        this.cartService.totalItems.next(0);
-        this.cartService.totalPrice.next(0);
-        this.form = this.createForm();
-        this.router.navigate(['/products']);
-      },
-      error: (error) => {
-        alert(`Error: ${error.message}`);
-      },
-    });
+    // payment amount needs to be converted from dollars to cents for Stripe processing
+    this.payment.amount = Math.round(this.totalPrice * 100);
+    this.payment.currency = 'USD';
+    this.payment.receiptEmail = customer.email;
+
+    // use stripe api to send credit card data directly to stripe.com servers
+    if (!this.form.invalid && this.creditCardErrors.textContent === '') {
+      this.isCreditCardProcessing = true;
+      this.checkoutService
+        .createPaymentIntent(this.payment)
+        .subscribe((resp) => {
+          this.stripe
+            .confirmCardPayment(
+              resp['client_secret'],
+              {
+                payment_method: {
+                  card: this.cardElement,
+                  billing_details: {
+                    email: purchase.customer.email,
+                    name: `${purchase.customer.firstName} ${purchase.customer.lastName}`,
+                    address: {
+                      line1: purchase.billingAddress.street,
+                      city: purchase.billingAddress.city,
+                      state: purchase.billingAddress.state,
+                      postal_code: purchase.billingAddress.zipCode,
+                      country: billingAddressCountryCode,
+                    },
+                  },
+                },
+              },
+              { handleActions: false }
+            )
+            .then((result: any) => {
+              if (result.error) {
+                // stripe transaction was not successful
+                alert(`Error: ${result.error.message}`);
+                this.isCreditCardProcessing = false;
+              } else {
+                // stripe transaction was successful
+                this.checkoutService.placeOrder(purchase).subscribe({
+                  next: (response) => {
+                    alert(
+                      `Your order has been received successfully.\n Order id: ${response.orderId}`
+                    );
+                    this.cartService.cartItems = [];
+                    this.cartService.saveCart();
+                    this.cartService.totalItems.next(0);
+                    this.cartService.totalPrice.next(0);
+                    this.form = this.createForm();
+                    this.router.navigate(['/products']);
+                    this.isCreditCardProcessing = false;
+                  },
+                  error: (error) => {
+                    alert(`Error: ${error.message}`);
+                    this.isCreditCardProcessing = false;
+                  },
+                });
+              }
+            });
+        });
+    } else {
+      this.form.markAllAsTouched();
+      return; // do nothing and display all error messages if credit card fields are invalid
+    }
+    // this.checkoutService.placeOrder(purchase).subscribe({
+    //   next: (response) => {
+    //     alert(
+    //       `Your order has been received successfully.\n Order id: ${response.orderId}`
+    //     );
+    //     this.cartService.cartItems = [];
+    //     this.cartService.totalItems.next(0);
+    //     this.cartService.totalPrice.next(0);
+    //     this.form = this.createForm();
+    //     this.router.navigate(['/products']);
+    //   },
+    //   error: (error) => {
+    //     alert(`Error: ${error.message}`);
+    //   },
+    // });
   }
 
   formNotSaved(): boolean {
@@ -249,6 +321,27 @@ export class CheckoutComponent
         console.info(err);
         this.loading = false;
       },
+    });
+  }
+
+  private setupStripeFormFields() {
+    // get handle to stripe library's elements
+    var elements = this.stripe.elements();
+
+    // create a card element from handle
+    this.cardElement = elements.create('card', { hidePostalCode: true });
+
+    // inject created card element into template
+    this.cardElement.mount('#card-element');
+
+    // listen for change events and display credit card validation errors in template if any
+    this.cardElement.on('change', (event: any) => {
+      this.creditCardErrors = document.getElementById('card-errors');
+      if (event.complete) {
+        this.creditCardErrors.textContent = '';
+      } else if (event.error) {
+        this.creditCardErrors.textContent = event.error.message;
+      }
     });
   }
 
@@ -316,26 +409,26 @@ export class CheckoutComponent
         ]),
       }),
       creditCardDetails: this.fb.group({
-        cardType: new FormControl<string>('', [Validators.required]),
-        nameOnCard: new FormControl<string>('', [
-          Validators.required,
-          CustomValidators.whiteSpaceCheck,
-        ]),
-        cardNumber: new FormControl<string>('', [
-          Validators.required,
-          Validators.pattern(/^[0-9]{16}$/), // 16 digit regex for Visa and Mastercard credit card numbers
-          CustomValidators.invalidCreditCardCheck, // luhn's algorithm to validate credit card number
-        ]),
-        cvv: new FormControl<string>('', [
-          Validators.required,
-          Validators.pattern(/^[0-9]{3}$/), // 3 digit regex for Visa and Mastercard CVVs
-        ]),
-        expirationYear: new FormControl<number>(this.years[0], [
-          Validators.required,
-        ]),
-        expirationMonth: new FormControl<number>(this.months[0], [
-          Validators.required,
-        ]),
+        // cardType: new FormControl<string>('', [Validators.required]),
+        // nameOnCard: new FormControl<string>('', [
+        //   Validators.required,
+        //   CustomValidators.whiteSpaceCheck,
+        // ]),
+        // cardNumber: new FormControl<string>('', [
+        //   Validators.required,
+        //   Validators.pattern(/^[0-9]{16}$/), // 16 digit regex for Visa and Mastercard credit card numbers
+        //   CustomValidators.invalidCreditCardCheck, // luhn's algorithm to validate credit card number
+        // ]),
+        // cvv: new FormControl<string>('', [
+        //   Validators.required,
+        //   Validators.pattern(/^[0-9]{3}$/), // 3 digit regex for Visa and Mastercard CVVs
+        // ]),
+        // expirationYear: new FormControl<number>(this.years[0], [
+        //   Validators.required,
+        // ]),
+        // expirationMonth: new FormControl<number>(this.months[0], [
+        //   Validators.required,
+        // ]),
       }),
       agreeToTermsAndConditions: this.fb.control<boolean>(true, [
         Validators.requiredTrue, // required True
@@ -365,13 +458,13 @@ interface FormFields {
     state: string;
     zipCode: string;
   };
-  creditCardDetails: {
-    cardType: string;
-    nameOnCard: string;
-    cardNumber: string;
-    cvv: string;
-    expirationYear: number;
-    expirationMonth: number;
+  creditCardDetails?: {
+    cardType?: string;
+    nameOnCard?: string;
+    cardNumber?: string;
+    cvv?: string;
+    expirationYear?: number;
+    expirationMonth?: number;
   };
   agreeToTermsAndConditions: boolean;
   subscribeToMarketingEmails: boolean;

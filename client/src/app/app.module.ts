@@ -2,14 +2,11 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { Routes, RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 
 import {
-  OktaAuthGuard,
   OktaAuthModule,
-  OktaCallbackComponent,
   OktaConfig,
 } from '@okta/okta-angular';
 import { OktaAuth } from '@okta/okta-auth-js';
@@ -34,52 +31,12 @@ import { CheckoutService } from './services/checkout.service';
 import { OrdersService } from './services/orders.service';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 
-import { formGuard, authGuard } from './utils';
-
 import AppConfig from './config/app-config';
+import { AppRoutingModule } from './app-routing.module';
 
 const oktaConfig = AppConfig['oidc'];
 const oktaAuth = new OktaAuth(oktaConfig);
 const moduleConfig: OktaConfig = { oktaAuth };
-
-const appRoutes: Routes = [
-  {
-    path: 'order-history',
-    component: OrdersHistoryComponent,
-    canActivate: [OktaAuthGuard],
-    data: { onAuthRequired: authGuard },
-  },
-  {
-    path: 'protected',
-    component: ProtectedComponent,
-    canActivate: [OktaAuthGuard],
-    data: { onAuthRequired: authGuard },
-  },
-  { path: 'login/callback', component: OktaCallbackComponent },
-  { path: 'login', component: LoginComponent },
-  {
-    path: 'checkout',
-    component: CheckoutComponent,
-    canDeactivate: [formGuard],
-  },
-  { path: 'cart', component: CartDetailsComponent },
-  { path: 'products/:id', component: ProductComponent },
-  { path: 'search/:keyword', component: ProductListComponent },
-  {
-    path: 'category/:id',
-    component: ProductListComponent,
-  },
-  {
-    path: 'category',
-    component: ProductListComponent,
-  },
-  {
-    path: 'products',
-    component: ProductListComponent,
-  },
-  { path: '', redirectTo: '/products', pathMatch: 'full' },
-  { path: '**', redirectTo: '/products', pathMatch: 'full' },
-];
 
 @NgModule({
   declarations: [
@@ -101,8 +58,8 @@ const appRoutes: Routes = [
     HttpClientModule,
     ReactiveFormsModule,
     NgxPaginationModule,
+    AppRoutingModule,
     OktaAuthModule.forRoot(moduleConfig),
-    RouterModule.forRoot(appRoutes),
   ],
   providers: [
     ProductService,

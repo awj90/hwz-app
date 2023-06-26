@@ -74,3 +74,8 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# https configs
+/client/localhost.conf
+/client/ssl-localhost
+/server/src/main/resources/*.p12

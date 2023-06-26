@@ -308,6 +308,11 @@
 
         <!-- Credit Card Details -->
         <div formGroupName="creditCardDetails" class="form-area">
+          <h3>Credit/Debit Card Details</h3>
+          <div id="card-element"></div>
+          <div id="card-errors" class="error"></div>
+        </div>
+        <!-- <div formGroupName="creditCardDetails" class="form-area">
           <h3>Credit Card Details</h3>
           <div class="row">
             <div class="col-md-2"><label>*Credit Card Type:</label></div>
@@ -435,7 +440,8 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
+
         <!-- Final review of order -->
         <div class="form-area">
           <h3>Review Your Order</h3>
@@ -506,7 +512,9 @@
           <button
             type="submit"
             class="btn btn-primary"
-            [disabled]="form.invalid || cartItems.length < 1"
+            [disabled]="
+              form.invalid || cartItems.length < 1 || isCreditCardProcessing
+            "
           >
             Confirm purchase
           </button>
