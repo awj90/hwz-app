@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Output } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { CartItem } from '../models/cart-item';
 import { CartService } from '../services/cart.service';
-import { firstValueFrom, Subscription } from 'rxjs';
+import { firstValueFrom, Subject, Subscription } from 'rxjs';
 import { BeforeLeavingComponent } from '../utils';
 import { Country } from '../models/country';
 import { LocationService } from '../services/location.service';
@@ -54,6 +54,7 @@ export class CheckoutComponent
   cardElement: any;
   creditCardErrors: any = '';
   isCreditCardProcessing: boolean = false;
+  showTermsAndConditions: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -286,6 +287,14 @@ export class CheckoutComponent
     //     alert(`Error: ${error.message}`);
     //   },
     // });
+  }
+
+  viewTandCs() {
+    this.showTermsAndConditions = true;
+  }
+
+  onCloseModal() {
+    this.showTermsAndConditions = false;
   }
 
   formNotSaved(): boolean {

@@ -1,3 +1,7 @@
+<app-modal
+  *ngIf="showTermsAndConditions"
+  (closeModal)="onCloseModal()"
+></app-modal>
 <div class="main-content page-m">
   <div class="section-content section-content-p30">
     <div class="container-fluid">
@@ -483,8 +487,10 @@
               formControlName="agreeToTermsAndConditions"
             /><span class="au-checkmark"></span>*I confirm I have read,
             understood, and agree to the
-            <a href="#">general terms and conditions </a> of the
-            purchase.&nbsp;<span
+            <button type="button" (click)="viewTandCs()">
+              <u>general terms and conditions</u>
+            </button>
+            of the purchase.&nbsp;<span
               *ngIf="form.get('agreeToTermsAndConditions')?.invalid"
               class="error"
               >Please agree to the terms and conditions of the purchase.</span

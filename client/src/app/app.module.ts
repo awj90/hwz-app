@@ -23,6 +23,7 @@ import { LoginComponent } from './components/login.component';
 import { AuthStatusComponent } from './components/auth-status.component';
 import { ProtectedComponent } from './components/protected.component';
 import { OrdersHistoryComponent } from './components/orders-history.component';
+import { ModalComponent } from './components/modal.component';
 
 import { ProductService } from './services/product.service';
 import { CartService } from './services/cart.service';
@@ -52,6 +53,7 @@ const moduleConfig: OktaConfig = { oktaAuth };
     AuthStatusComponent,
     ProtectedComponent,
     OrdersHistoryComponent,
+    ModalComponent,
   ],
   imports: [
     BrowserModule,
