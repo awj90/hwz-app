@@ -1,16 +1,18 @@
-import { NgModule } from "@angular/core";
-import { Routes, RouterModule, PreloadAllModules } from "@angular/router";
-import { OktaAuthGuard, OktaCallbackComponent } from "@okta/okta-angular";
-import { CartDetailsComponent } from "./components/cart-details.component";
-import { CheckoutComponent } from "./components/checkout.component";
-import { LoginComponent } from "./components/login.component";
-import { OrdersHistoryComponent } from "./components/orders-history.component";
-import { ProductListComponent } from "./components/product-list.component";
-import { ProductComponent } from "./components/product.component";
-import { ProtectedComponent } from "./components/protected.component";
-import { authGuard, formGuard } from "./utils";
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
+import { OktaAuthGuard, OktaCallbackComponent } from '@okta/okta-angular';
+import { CartDetailsComponent } from './components/cart-details.component';
+import { CheckoutComponent } from './components/checkout.component';
+import { LoginComponent } from './components/login.component';
+import { OrdersHistoryComponent } from './components/orders-history.component';
+import { ProductListComponent } from './components/product-list.component';
+import { ProductComponent } from './components/product.component';
+import { ProtectedComponent } from './components/protected.component';
+import { authGuard, formGuard } from './utils';
+import { WebcamComponent } from './components/webcam.component';
 
 const appRoutes: Routes = [
+  { path: 'products/:id/fitting', component: WebcamComponent },
   {
     path: 'order-history',
     component: OrdersHistoryComponent,

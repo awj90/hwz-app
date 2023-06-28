@@ -1,0 +1,36 @@
+.backdrop {
+  background: #717174;
+  position: fixed;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.96;
+  z-index: 50;
+}
+
+.alert-box {
+  position: fixed;
+  top: 20vh;
+  left: 20vw;
+  width: 60vw;
+  height: 60vh;
+  padding: 16px;
+  z-index: 100;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  overflow: auto; /* Add scrollbars if content overflows */
+}
+
+#product {
+  position: absolute;
+  display: none;
+  text-align: center;
+}
+#product.visible {
+  display: block;
+}
+.container {
+  position: relative;
+}
