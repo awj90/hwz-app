@@ -34,6 +34,7 @@ import { AuthInterceptorService } from './services/auth-interceptor.service';
 
 import AppConfig from './config/app-config';
 import { AppRoutingModule } from './app-routing.module';
+import { WebcamComponent } from './components/webcam.component';
 
 const oktaConfig = AppConfig['oidc'];
 const oktaAuth = new OktaAuth(oktaConfig);
@@ -54,6 +55,7 @@ const moduleConfig: OktaConfig = { oktaAuth };
     ProtectedComponent,
     OrdersHistoryComponent,
     ModalComponent,
+    WebcamComponent,
   ],
   imports: [
     BrowserModule,
