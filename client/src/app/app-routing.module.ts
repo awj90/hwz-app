@@ -9,10 +9,8 @@ import { ProductListComponent } from './components/product-list.component';
 import { ProductComponent } from './components/product.component';
 import { ProtectedComponent } from './components/protected.component';
 import { authGuard, formGuard } from './utils';
-import { WebcamComponent } from './components/webcam.component';
 
 const appRoutes: Routes = [
-  { path: 'products/:id/fitting', component: WebcamComponent },
   {
     path: 'order-history',
     component: OrdersHistoryComponent,

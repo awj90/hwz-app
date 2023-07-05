@@ -1,39 +1,26 @@
 <div class="backdrop">
   <div class="alert-box">
     <div id="product">
-      <img src="https://awj90.sgp1.digitaloceanspaces.com/2.png" />
+      <img
+        src="https://awj90.sgp1.digitaloceanspaces.com/{{
+          selectedProduct.id
+        }}.png"
+      />
     </div>
     <video #videoFeed autoplay muted></video>
-    <button id="start" (click)="startVideo()">Start video</button>
-    <button id="stop" (click)="stopVideo()">Stop video</button>
+    <br />
+    <button class="btn btn-primary btn-sm" (click)="startVideo()">
+      Start video
+    </button>
+    &nbsp;
+    <button class="btn btn-danger btn-sm" (click)="stopVideo()">
+      Stop video
+    </button>
+    &nbsp;
+    <button class="btn btn-success btn-sm" (click)="addToCart()">
+      Add to cart
+    </button>
+    &nbsp;
+    <button class="btn btn-info btn-sm" (click)="onClose()">Back</button>
   </div>
 </div>
-
-<!-- <div class="main-content">
-  <div class="video-container">
-    <video #video [width]="WIDTH" [height]="HEIGHT" autoplay muted></video>
-    <div #canvas></div>
-  </div>
-</div> -->
-
-<!-- <div id="hat">🎩</div>
-    <video
-      id="video"
-      width="1280"
-      height="720"
-      autoplay
-      muted
-      #videoFeed
-    ></video>
-    <div>
-      <label for="deviceSelector"> Select device </label>
-      <select id="deviceSelector" (change)="onSelect($event)">
-        <option *ngFor="let d of deviceList" value="d.deviceId">
-          {{ d.label }}>
-        </option>
-      </select>
-    </div>
-    <div>
-      <label for="hatSelector"> Select hat </label>
-      <select id="hatSelector"></select>
-    </div> -->

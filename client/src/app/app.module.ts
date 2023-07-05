@@ -5,10 +5,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 
-import {
-  OktaAuthModule,
-  OktaConfig,
-} from '@okta/okta-angular';
+import { OktaAuthModule, OktaConfig } from '@okta/okta-angular';
 import { OktaAuth } from '@okta/okta-auth-js';
 
 import { AppComponent } from './app.component';
@@ -31,6 +28,7 @@ import { LocationService } from './services/location.service';
 import { CheckoutService } from './services/checkout.service';
 import { OrdersService } from './services/orders.service';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
+import { FittingService } from './services/fitting-service';
 
 import AppConfig from './config/app-config';
 import { AppRoutingModule } from './app-routing.module';
@@ -70,6 +68,7 @@ const moduleConfig: OktaConfig = { oktaAuth };
     CartService,
     LocationService,
     CheckoutService,
+    FittingService,
     OrdersService,
     {
       provide: HTTP_INTERCEPTORS,

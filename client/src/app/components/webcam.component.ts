@@ -1,19 +1,42 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import * as faceapi from 'face-api.js';
+import { Subject, Subscription } from 'rxjs';
+import { Product } from '../models/product';
+import { FittingService } from '../services/fitting-service';
+import { CartService } from '../services/cart.service';
+import { CartItem } from '../models/cart-item';
 
 @Component({
   selector: 'app-webcam',
   templateUrl: './webcam.component.html',
   styleUrls: ['./webcam.component.css'],
 })
-export class WebcamComponent implements OnInit {
+export class WebcamComponent implements OnInit, OnDestroy {
   @ViewChild('videoFeed')
   videoElRef!: ElementRef;
   faceDetectionInterval!: NodeJS.Timer; // 'debounce' time
+  selectedProduct$!: Subscription;
+  selectedProduct!: Product;
+  @Output() close = new Subject<void>();
 
-  constructor(private elRef: ElementRef) {}
+  constructor(
+    private elRef: ElementRef,
+    private fittingService: FittingService,
+    private cartService: CartService
+  ) {}
 
   async ngOnInit() {
+    this.selectedProduct$ =
+      this.fittingService.selectedProductForFitting.subscribe(
+        (product) => (this.selectedProduct = product)
+      );
     // load face detection models
     await Promise.all([
       faceapi.nets.tinyFaceDetector.loadFromUri('../assets/models'),
@@ -21,6 +44,10 @@ export class WebcamComponent implements OnInit {
       await faceapi.nets.faceRecognitionNet.loadFromUri('../assets/models'),
       await faceapi.nets.faceExpressionNet.loadFromUri('../assets/models'),
     ]).then(() => this.startVideo());
+  }
+
+  ngOnDestroy(): void {
+    this.selectedProduct$.unsubscribe();
   }
 
   startVideo() {
@@ -75,6 +102,17 @@ export class WebcamComponent implements OnInit {
           box._width
         }px; height: ${box._height}px`
       );
+  }
+
+  addToCart() {
+    this.cartService.addToCart(new CartItem(this.selectedProduct));
+    alert(`${this.selectedProduct.name} successfully added to cart!`);
+    this.onClose();
+  }
+
+  onClose() {
+    this.stopVideo();
+    this.close.next();
   }
 }
 

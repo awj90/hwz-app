@@ -1,3 +1,4 @@
+<app-webcam *ngIf="showFittingRoom" (close)="onCloseModal()"></app-webcam>
 <div class="main-content">
   <div class="section-content section-content-p30">
     <div class="container-fluid">
@@ -35,7 +36,11 @@
               <div class="price">
                 {{ product.unitPrice | currency : "USD" }}
               </div>
-              <button type="button" class="btn btn-primary btn-sm">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="onOpenModal(product)"
+              >
                 Try it on
               </button>
               &nbsp;

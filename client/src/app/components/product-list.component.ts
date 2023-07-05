@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Output } from '@angular/core';
 import { ProductService } from '../services/product.service';
 import { Product } from '../models/product';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { CartService } from '../services/cart.service';
 import { CartItem } from '../models/cart-item';
+import { FittingService } from '../services/fitting-service';
 
 @Component({
   selector: 'app-product-list',
@@ -20,10 +21,13 @@ export class ProductListComponent implements OnInit, OnDestroy {
   page: number = 1; // page 1 in ngx-pagination = page 0 in spring-boot Pageable
   count: number = 0;
   countSub$!: Subscription;
+  showFittingRoom: boolean = false;
+  @Output() selectedProductIdForFitting = new Subject<number>();
 
   constructor(
     private productService: ProductService,
     private cartService: CartService,
+    private fittingService: FittingService,
     private activatedRoute: ActivatedRoute
   ) {}
 
@@ -52,6 +56,15 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   addToCart(product: Product) {
     this.cartService.addToCart(new CartItem(product));
+  }
+
+  onOpenModal(product: Product) {
+    this.fittingService.selectedProductForFitting.next(product);
+    this.showFittingRoom = true;
+  }
+
+  onCloseModal() {
+    this.showFittingRoom = false;
   }
 
   private getProducts() {
